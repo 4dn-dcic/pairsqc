@@ -4,6 +4,8 @@ library(Soo.plot.base)
 
 x=read.table("log2",skip=0,sep="\t",stringsAsFactors=F,header=T)
 
+setwd("tests")
+
 # proportion
 pngpdf( function(){    
 par(plt=c(0.2,0.8,0.2,0.8))
