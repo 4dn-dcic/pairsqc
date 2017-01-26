@@ -9,21 +9,33 @@ setwd("tests")
 # proportion
 pngpdf( function(){    
 par(plt=c(0.2,0.8,0.2,0.8))
-matplot(x[,1],x[,12:15],pch=19,type='o',xlab="distance (log10)", ylab="Proportion",lwd=1,lty=1)
+matplot(x[,1],x[,12:15],pch=19,type='o',xlab="distance (log10)", ylab="Proportion",lwd=1,lty=1, axes=F)
+at=pretty(x[,1])
+axis(1,at=at, label=10^at)
+axis(2)
+box()
 legend("topright",sub('proportion.','',colnames(x)[12:15]),col=1:4,bty="n",pch=19,lwd=1,lty=1)
 },"proportion")
 
 # log10 count
 pngpdf( function(){
 par(plt=c(0.2,0.8,0.2,0.8))
-matplot(x[,1],x[,7:10],pch=19,type='o',xlab="distance (log10)", ylab="Contact frequency (log10)",lwd=1,lty=1,ylim=c(0,max(x[,7:10])))
+matplot(x[,1],x[,7:10],pch=19,type='o',xlab="distance (log10)", ylab="Contact frequency (log10)",lwd=1,lty=1,ylim=c(0,max(x[,7:10])), axes=F)
+at=pretty(x[,1])
+axis(1,at=at, label=10^at)
+axis(2)
+box()
 legend("bottomright",sub('log10count.','',colnames(x)[7:10]),col=1:4,bty="n",pch=19,lwd=1,lty=1)
 },"log10counts")
 
 # log10 prob
 pngpdf( function(){
 par(plt=c(0.2,0.8,0.2,0.8))
-plot(x[,1],x[,18],pch=19,type='o',xlab="distance (log10)", ylab="Contact probability (log10)",lwd=1,lty=1,ylim=range(x[,18]))
+plot(x[,1],x[,18],pch=19,type='o',xlab="distance (log10)", ylab="Contact probability (log10)",lwd=1,lty=1,ylim=range(x[,18]),axes=F)
+at=pretty(x[,1])
+axis(1, at=at, label=10^at)
+axis(2)
+box()
 }, "log10prob")
 
 entropy<-function(xx)-sum(xx*log2(xx))
