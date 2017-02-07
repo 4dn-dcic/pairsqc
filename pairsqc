@@ -2,14 +2,14 @@ import pypairix
 import math
 
 SEPARATOR = '|'
-#POS1_COL = 2
-#POS2_COL = 4
-#STRAND1_COL = 5
-#STRAND2_COL = 6
 POS1_COL = 2
-POS2_COL = 6
-STRAND1_COL = 0
-STRAND2_COL = 4
+POS2_COL = 4
+STRAND1_COL = 5
+STRAND2_COL = 6
+#POS1_COL = 2
+#POS2_COL = 6
+#STRAND1_COL = 0
+#STRAND2_COL = 4
 
 
 def get_chr_lens ( chromsize_file ):
@@ -66,8 +66,8 @@ def distance_histogram ( pairs_file, chromsize_file, max_logdistance=math.log10(
     nChr = len(chrsizes)
     max_bin_number = int( ( max_logdistance - logdistance_binsize / 2 ) / logdistance_binsize )
 
-    #orientation_list = ['+-','-+','++','--']
-    orientation_list = ['016','160','00','1616']
+    orientation_list = ['+-','-+','++','--']
+    #orientation_list = ['016','160','00','1616']
     orientation_names = ['Inner','Outer','Right','Left']
 
     count = { a: [0] * (max_bin_number + 1) for a in orientation_list }
@@ -165,6 +165,6 @@ if __name__ == '__main__':
    #cis_trans_ratio ( args.pairs, DIST_THRES=5000 )
    #cis_trans_ratio ( args.pairs, DIST_THRES=0 )
    #distance_histogram ( args.pairs )
-   distance_histogram ( args.pairs, args.chrsize, max_logdistance = 8 , min_logdistance = 1 )
+   distance_histogram ( args.pairs, args.chrsize, max_logdistance = 16 , min_logdistance = 1 )
 
 
