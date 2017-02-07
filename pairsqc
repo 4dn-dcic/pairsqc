@@ -2,29 +2,18 @@ import pypairix
 import math
 
 SEPARATOR = '|'
-<<<<<<< HEAD
-POS1_COL = 2
-POS2_COL = 4
-STRAND1_COL = 5
-STRAND2_COL = 6
-=======
 #POS1_COL = 2
 #POS2_COL = 4
 #STRAND1_COL = 5
 #STRAND2_COL = 6
->>>>>>> e06fca58ac7c99fc457f693c643e93619c2771f5
 #POS1_COL = 2
 #POS2_COL = 6
 #STRAND1_COL = 0
 #STRAND2_COL = 4
-<<<<<<< HEAD
-=======
 POS1_COL = 3
 POS2_COL = 7
 STRAND1_COL = 1
 STRAND2_COL = 5
->>>>>>> e06fca58ac7c99fc457f693c643e93619c2771f5
-
 
 def get_chr_lens ( chromsize_file ):
     chrsize=dict()
@@ -35,9 +24,7 @@ def get_chr_lens ( chromsize_file ):
 
 
 def cis_trans_ratio ( pairs_file, DIST_THRES=20000, pos1_col=POS1_COL, pos2_col=POS2_COL, strand1_col=STRAND1_COL, strand2_col=STRAND2_COL ):
-    '''
-    measure cis/trans ratio for a given pairs file
-    '''
+    """measure cis/trans ratio for a given pairs file"""
 
     cis=0
     trans=0
@@ -68,12 +55,11 @@ def cis_trans_ratio ( pairs_file, DIST_THRES=20000, pos1_col=POS1_COL, pos2_col=
 
 
 def distance_histogram ( pairs_file, chromsize_file, max_logdistance=math.log10(1E5), min_logdistance=math.log10(10), logdistance_binsize=0.2, pos1_col=POS1_COL, pos2_col=POS2_COL, strand1_col=STRAND1_COL, strand2_col=STRAND2_COL, pseudocount=1E-100 ):
-    '''
-    create a log10-scale binned histogram table for read separation distance histogram
+    """create a log10-scale binned histogram table for read separation distance histogram
     The histogram is stratefied by read orientation (4 different orientations)
     The table includes raw counts, log10 counts (pseudocounts added), contact probability, log10 contact probability, and proportions for orientation (pseudocounts added)
     Bin is represented by the mid value at the log10 scale. 
-    '''
+    """
 
     chrsizes = get_chr_lens( chromsize_file )
     genomelen = sum(v for v in chrsizes.values())

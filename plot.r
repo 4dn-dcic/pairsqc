@@ -2,7 +2,7 @@ library(devtools)
 install_url("https://github.com/SooLee/Soo.plot.base/archive/0.9.0.zip")
 library(Soo.plot.base)
 
-x=read.table("log3",skip=0,sep="\t",stringsAsFactors=F,header=T)
+x=read.table("log2",skip=0,sep="\t",stringsAsFactors=F,header=T)
 
 setwd("tests")
 
