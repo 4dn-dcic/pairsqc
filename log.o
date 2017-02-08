@@ -404,3 +404,80 @@ PS:
 
 Read file <log.e> for stderr output of this job.
 
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@clarinet001-153.orchestra>
+Subject: Job 814297: <python pairsqc --pairs /n/data1/hms/dbmi/park/sl325/4dn/pairs/K562_insitu_merged_nodups.tab.chrblock_sorted.-4.txt.gz --chrsize /n/data1/hms/dbmi/park/sl325/4dn/pairs/hg19.chrom.sizes.mainonly> Exited
+
+Job <python pairsqc --pairs /n/data1/hms/dbmi/park/sl325/4dn/pairs/K562_insitu_merged_nodups.tab.chrblock_sorted.-4.txt.gz --chrsize /n/data1/hms/dbmi/park/sl325/4dn/pairs/hg19.chrom.sizes.mainonly> was submitted from host <loge.orchestra> by user <sl325> in cluster <hms_orchestra>.
+Job was executed on host(s) <clarinet001-153.orchestra>, in queue <short>, as user <sl325> in cluster <hms_orchestra>.
+</home/sl325> was used as the home directory.
+</home/sl325/git/pairsqc> was used as the working directory.
+Started at Tue Feb  7 14:14:38 2017
+Results reported at Tue Feb  7 14:16:54 2017
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python pairsqc --pairs /n/data1/hms/dbmi/park/sl325/4dn/pairs/K562_insitu_merged_nodups.tab.chrblock_sorted.-4.txt.gz --chrsize /n/data1/hms/dbmi/park/sl325/4dn/pairs/hg19.chrom.sizes.mainonly
+------------------------------------------------------------
+
+TERM_OWNER: job killed by owner.
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time   :    134.35 sec.
+    Max Memory :       205 MB
+    Max Swap   :       558 MB
+
+    Max Processes  :         3
+    Max Threads    :         4
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file <log.e> for stderr output of this job.
+
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@clarinet001-022.orchestra>
+Subject: Job 814694: <python pairsqc --pairs /n/data1/hms/dbmi/park/sl325/4dn/pairs/K562_insitu_merged_nodups.tab.chrblock_sorted.-4.txt.gz --chrsize /n/data1/hms/dbmi/park/sl325/4dn/pairs/hg19.chrom.sizes.mainonly > K562.out> Done
+
+Job <python pairsqc --pairs /n/data1/hms/dbmi/park/sl325/4dn/pairs/K562_insitu_merged_nodups.tab.chrblock_sorted.-4.txt.gz --chrsize /n/data1/hms/dbmi/park/sl325/4dn/pairs/hg19.chrom.sizes.mainonly > K562.out> was submitted from host <loge.orchestra> by user <sl325> in cluster <hms_orchestra>.
+Job was executed on host(s) <clarinet001-022.orchestra>, in queue <short>, as user <sl325> in cluster <hms_orchestra>.
+</home/sl325> was used as the home directory.
+</home/sl325/git/pairsqc> was used as the working directory.
+Started at Tue Feb  7 14:17:17 2017
+Results reported at Tue Feb  7 15:12:10 2017
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python pairsqc --pairs /n/data1/hms/dbmi/park/sl325/4dn/pairs/K562_insitu_merged_nodups.tab.chrblock_sorted.-4.txt.gz --chrsize /n/data1/hms/dbmi/park/sl325/4dn/pairs/hg19.chrom.sizes.mainonly > K562.out
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time   :   3290.42 sec.
+    Max Memory :       208 MB
+    Max Swap   :       559 MB
+
+    Max Processes  :         3
+    Max Threads    :         4
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file <log.e> for stderr output of this job.
+

@@ -6,14 +6,18 @@ SEPARATOR = '|'
 #POS2_COL = 4
 #STRAND1_COL = 5
 #STRAND2_COL = 6
-#POS1_COL = 2
-#POS2_COL = 6
-#STRAND1_COL = 0
-#STRAND2_COL = 4
-POS1_COL = 3
-POS2_COL = 7
-STRAND1_COL = 1
-STRAND2_COL = 5
+POS1_COL = 2
+POS2_COL = 6
+STRAND1_COL = 0
+STRAND2_COL = 4
+#POS1_COL = 3
+#POS2_COL = 7
+#STRAND1_COL = 1
+#STRAND2_COL = 5
+
+#orientation_list = ['+-','-+','++','--']
+orientation_list = ['016','160','00','1616']
+orientation_names = ['Inner','Outer','Right','Left']
 
 def get_chr_lens ( chromsize_file ):
     chrsize=dict()
@@ -66,10 +70,6 @@ def distance_histogram ( pairs_file, chromsize_file, max_logdistance=math.log10(
     nChr = len(chrsizes)
     max_bin_number = int( ( max_logdistance - logdistance_binsize / 2 ) / logdistance_binsize )
 
-    orientation_list = ['+-','-+','++','--']
-    #orientation_list = ['016','160','00','1616']
-    orientation_names = ['Inner','Outer','Right','Left']
-
     count = { a: [0] * (max_bin_number + 1) for a in orientation_list }
     log10count = { a: [0] * (max_bin_number + 1) for a in orientation_list }
     pcount = { a: [0] * (max_bin_number + 1) for a in orientation_list }
@@ -82,11 +82,12 @@ def distance_histogram ( pairs_file, chromsize_file, max_logdistance=math.log10(
     tb=pypairix.open( pairs_file )
     chrplist = tb.get_blocknames()
 
+    n=0
     # calculate histogram
     for chrp in chrplist:
-        it = tb.querys2D( chrp )
         chr1, chr2 = chrp.split( SEPARATOR )
         if chr1 == chr2:
+            it = tb.querys2D( chrp )
             for x in it:
                 distance = int( x[pos2_col] ) - int( x[pos1_col] )
 
@@ -97,7 +98,7 @@ def distance_histogram ( pairs_file, chromsize_file, max_logdistance=math.log10(
                     orientation = str( x[strand2_col] ) + str( x[strand1_col] )
                     distance = abs(distance)
    
-                if orientation not in orientation_list:
+                if orientation not in orientation_list: # for some exceptional cases like '4' in merged_nodup
                     continue
  
                 # remove zero distance
@@ -107,7 +108,8 @@ def distance_histogram ( pairs_file, chromsize_file, max_logdistance=math.log10(
                     if bin_number <= max_bin_number:
                         count[orientation][bin_number] += 1
                         sumcount[bin_number] += 1
-
+                n+=1
+    print(n)
 
     # calculate histogram in log10 counts and proportion
     for bin_number in range(0, max_bin_number + 1):

@@ -17,3 +17,9 @@ Traceback (most recent call last):
   File "pairsqc", line 109, in distance_histogram
     count[orientation][bin_number] += 1
 KeyError: '04'
+Traceback (most recent call last):
+  File "pairsqc", line 171, in <module>
+    distance_histogram ( args.pairs, args.chrsize, max_logdistance = 16 , min_logdistance = 1 )
+  File "pairsqc", line 91, in distance_histogram
+    distance = int( x[pos2_col] ) - int( x[pos1_col] )
+KeyboardInterrupt
