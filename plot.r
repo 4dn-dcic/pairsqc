@@ -2,7 +2,7 @@ library(devtools)
 install_url("https://github.com/SooLee/Soo.plot.base/archive/0.9.0.zip")
 library(Soo.plot.base)
 
-x=read.table("K562.out",skip=0,sep="\t",stringsAsFactors=F,header=T)
+x=read.table("out",skip=0,sep="\t",stringsAsFactors=F,header=T)
 x=x[1:70,] # up to 10^8.
 
 setwd("tests")
