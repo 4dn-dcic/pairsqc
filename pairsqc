@@ -58,7 +58,7 @@ def cis_trans_ratio ( pairs_file, DIST_THRES=20000, pos1_col=POS1_COL, pos2_col=
     print( "Cis/Trans ratio\t{:.3f}".format(cis/(cis+trans)*100) )
 
 
-def distance_histogram ( pairs_file, chromsize_file, max_logdistance=math.log10(1E5), min_logdistance=math.log10(10), logdistance_binsize=0.2, pos1_col=POS1_COL, pos2_col=POS2_COL, strand1_col=STRAND1_COL, strand2_col=STRAND2_COL, pseudocount=1E-100 ):
+def distance_histogram ( pairs_file, chromsize_file, max_logdistance=math.log10(1E5), min_logdistance=math.log10(10), logdistance_binsize=0.1, pos1_col=POS1_COL, pos2_col=POS2_COL, strand1_col=STRAND1_COL, strand2_col=STRAND2_COL, pseudocount=1E-100 ):
     """create a log10-scale binned histogram table for read separation distance histogram
     The histogram is stratefied by read orientation (4 different orientations)
     The table includes raw counts, log10 counts (pseudocounts added), contact probability, log10 contact probability, and proportions for orientation (pseudocounts added)
@@ -82,7 +82,6 @@ def distance_histogram ( pairs_file, chromsize_file, max_logdistance=math.log10(
     tb=pypairix.open( pairs_file )
     chrplist = tb.get_blocknames()
 
-    n=0
     # calculate histogram
     for chrp in chrplist:
         chr1, chr2 = chrp.split( SEPARATOR )
@@ -108,8 +107,7 @@ def distance_histogram ( pairs_file, chromsize_file, max_logdistance=math.log10(
                     if bin_number <= max_bin_number:
                         count[orientation][bin_number] += 1
                         sumcount[bin_number] += 1
-                n+=1
-    print(n)
+ 
 
     # calculate histogram in log10 counts and proportion
     for bin_number in range(0, max_bin_number + 1):
@@ -124,8 +122,9 @@ def distance_histogram ( pairs_file, chromsize_file, max_logdistance=math.log10(
     # calculate contact probability
     for bin_number in range(0, max_bin_number + 1):
         bin_x = bin_number * logdistance_binsize + logdistance_binsize/2
+        bin_x_size = 10**( bin_x + logdistance_binsize/2 ) - 10**( bin_x - logdistance_binsize/2 )
         allpossible_sumcount[bin_number] = genomelen - nChr * ( 10**bin_x + 1 )  # same as sum of (chrlen - bin_x - 1).
-        prob[bin_number] = sumcount[bin_number] / allpossible_sumcount[bin_number]
+        prob[bin_number] = sumcount[bin_number] / allpossible_sumcount[bin_number] / bin_x_size # normalize by bin size
         log10prob[bin_number] = math.log10( prob[bin_number] + pseudocount )
 
 
