@@ -17,6 +17,7 @@ Rscript plot2.r
 * The first bin where the four orientations converge is called resolution, and is determined by using standard deviation of the proportions < 0.02.
 
 ![](tests/proportion.20170208.png)
+![](tests/sd_w_cut.20170208.png)
 
 #### Contact propability versus genomic separation
 * s = 5'-5' separation of an intrachromosomal read.
