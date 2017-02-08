@@ -5,7 +5,7 @@ library(Soo.plot.base)
 x=read.table("out",skip=0,sep="\t",stringsAsFactors=F,header=T)
 x=x[1:70,] # up to 10^8.
 
-setwd("tests")
+setwd("plots")
 
 exp_axis<-function(x,axis_ind){
   at=pretty(x)
