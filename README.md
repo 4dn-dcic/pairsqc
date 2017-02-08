@@ -1,7 +1,7 @@
 ### example run
 ```
 python pairsqc.py --pairs ../pairix/samples/merged_nodup.tab.chrblock_sorted.txt.gz --chrsize ~/data/references/hg19.chrom.sizes > out
-Rscript plot2.r # assumes the output name is 'out'
+Rscript plot.r # assumes the output name is 'out'
 ```
 Output text file example : [out](out)
 
