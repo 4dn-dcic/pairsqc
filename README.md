@@ -29,3 +29,7 @@ Output text file example : [out](out)
 * Slope of the region 10^4 ~ 10^5.5 is displayed.
 
 ![](tests/log10prob.20170208.png)
+
+#### Speed
+2.7sec/M reads on Macbook Air with 2.2 GHz Intel Core i7.
+(~2700 seconds for 1B reads)
