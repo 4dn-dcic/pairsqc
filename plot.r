@@ -69,12 +69,6 @@ plot(entropies,type='o',pch=19,ylab="entropy",xlab="distance")
 print(entropies)
 },"entropy",height=4)
 
-# sd
-pngpdf( function(){
-par(plt=c(0.2,0.8,0.2,0.8))
-sds=apply(x[,12:15],1,sd)
-plot(x[,1], sds,type='o',pch=19,ylab="sd",xlab="distance")
-},"sd",height=4)
 
 # sd with cut off
 pngpdf( function(){
