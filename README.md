@@ -17,8 +17,8 @@ Output text file example : [out](out)
 * For each bin, the number of reads with each of the four orientations is obtained. To compute proportion, each count is supplemented with a pseudocount of 1E-100, and divided by the sum over the four orientations for that bin.
 * The first bin where the four orientations converge is called resolution, and is determined by using standard deviation of the proportions < 0.02.
 
-![](tests/proportion.20170208.png)
-![](tests/sd_w_cut.20170208.png)
+![](plots/proportion.20170208.png)
+![](plots/sd_w_cut.20170208.png)
 
 #### Contact propability versus genomic separation
 * s = 5'-5' separation of an intrachromosomal read.
@@ -28,7 +28,7 @@ Output text file example : [out](out)
   * bin_size is computed as max distance - min distance (e.g. for bin 10^2.8 ~ 10^ 2.9, the binsize is 10^2.9 - 10^2.8).
 * Slope of the region 10^4 ~ 10^5.5 is displayed.
 
-![](tests/log10prob.20170208.png)
+![](plots/log10prob.20170208.png)
 
 #### Speed
 2.7sec/M reads on Macbook Air with 2.2 GHz Intel Core i7.
