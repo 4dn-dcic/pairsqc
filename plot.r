@@ -3,6 +3,7 @@ install_url("https://github.com/SooLee/Soo.plot.base/archive/0.9.0.zip")
 library(Soo.plot.base)
 
 x=read.table("K562.out",skip=0,sep="\t",stringsAsFactors=F,header=T)
+x=x[1:70,] # up to 10^8.
 
 setwd("tests")
 
@@ -16,7 +17,8 @@ exp_axis<-function(x,axis_ind){
 # proportion
 pngpdf( function(){    
 par(plt=c(0.2,0.8,0.2,0.8))
-matplot(x[,1],x[,12:15],pch=19,type='o',xlab="distance (log10)", ylab="Proportion",lwd=1,lty=1, axes=F)
+xlim=c(2,4)
+matplot(x[,1],x[,12:15],pch=19,type='o',xlab="distance (log10)", ylab="Proportion",lwd=1,lty=1, axes=F, xlim=xlim)
 exp_axis(x[,1],1)
 axis(2)
 box()
@@ -27,8 +29,9 @@ legend("topright",sub('proportion.','',colnames(x)[12:15]),col=1:4,bty="n",pch=1
 pngpdf( function(){
 par(plt=c(0.2,0.8,0.2,0.8))
 ylim=c(0,max(x[,7:10]))
-matplot(x[,1],x[,7:10],pch=19,type='o',xlab="distance (log10)", ylab="Contact frequency (log10)",lwd=1,lty=1,ylim=ylim, axes=F)
-exp_axis(x[,1],1)
+xlim=c(2,4)
+matplot(x[,1],x[,7:10],pch=19,type='o',xlab="distance (log10)", ylab="Contact frequency (log10)",lwd=1,lty=1,ylim=ylim, axes=F, xlim=xlim)
+exp_axis(xlim,1)
 exp_axis(ylim,2)
 box()
 legend("bottomright",sub('log10count.','',colnames(x)[7:10]),col=1:4,bty="n",pch=19,lwd=1,lty=1)
@@ -38,10 +41,22 @@ legend("bottomright",sub('log10count.','',colnames(x)[7:10]),col=1:4,bty="n",pch
 pngpdf( function(){
 par(plt=c(0.2,0.8,0.2,0.8))
 ylim=range(x[,18])
-plot(x[,1],x[,18],pch=19,type='o',xlab="distance (log10)", ylab="Contact probability (log10)",lwd=1,lty=1,ylim=ylim,axes=F)
-exp_axis(x[,1],1)
+xlim=c(3.2,8)
+plot(x[,1],x[,18],pch=19,type='o',xlab="distance (log10)", ylab="Contact probability (log10)",lwd=1,lty=1,ylim=ylim,axes=F,xlim=xlim)
+exp_axis(xlim,1)
 exp_axis(ylim,2)
 box()
+
+# slope
+tad=which(x$distance>=4 & x$distance<=5.5)
+xx=x$distance[tad]
+yy=x$log10prob[tad]
+tad_slope=glm(yy~xx)$coefficients[2]
+tad_intercept=glm(yy~xx)$coefficients[1]
+spacing=abs(yy[1]*0.07)
+text(xx[1], yy[1]+spacing, paste("slope=",round(tad_slope,2),sep=' '), pos=4)
+abline(a=tad_intercept + spacing, b=tad_slope, lty=2)
+
 }, "log10prob")
 
 entropy<-function(xx)-sum(xx*log2(xx))
