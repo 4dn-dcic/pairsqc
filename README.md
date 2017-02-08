@@ -25,5 +25,6 @@ Rscript plot2.r
 * For each bin, contact probability is computed as number_of_reads / number_of_possible_reads / bin_size.
   * number_of_possible_reads is computed as the sum of L_chr - s_mid - 1 over all chromosomes included in the input `chrsize` file, where L_chr is the length of a chromosome. This is equivalent of L_genome - N_chr * (s_mid + 1), where L_genome is the sum of all chromosome lengths and N_chr is the number of chromosomes. S_mid is the mid point of the bin at log10 scale (bin 10^2.8 ~ 10^2.9 has mid point 10^2.85).
   * bin_size is computed as max distance - min distance (e.g. for bin 10^2.8 ~ 10^ 2.9, the binsize is 10^2.9 - 10^2.8).
+* Slope of the region 10^4 ~ 10^5.5 is displayed.
 
 ![](tests/log10prob.20170208.png)
