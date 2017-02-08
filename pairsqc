@@ -2,22 +2,34 @@ import pypairix
 import math
 
 SEPARATOR = '|'
+
+## pairs ##
 #POS1_COL = 2
 #POS2_COL = 4
 #STRAND1_COL = 5
 #STRAND2_COL = 6
-POS1_COL = 2
-POS2_COL = 6
-STRAND1_COL = 0
-STRAND2_COL = 4
-#POS1_COL = 3
-#POS2_COL = 7
-#STRAND1_COL = 1
-#STRAND2_COL = 5
 
+## merged_nodup ##
+#POS1_COL = 2
+#POS2_COL = 6
+#STRAND1_COL = 0
+#STRAND2_COL = 4
+
+## old merged_nodup ##
+POS1_COL = 3
+POS2_COL = 7
+STRAND1_COL = 1
+STRAND2_COL = 5
+
+## pairs
 #orientation_list = ['+-','-+','++','--']
+
+## merged_nodup and old merged_nodup
 orientation_list = ['016','160','00','1616']
+
+## common across input formats
 orientation_names = ['Inner','Outer','Right','Left']
+
 
 def get_chr_lens ( chromsize_file ):
     chrsize=dict()
