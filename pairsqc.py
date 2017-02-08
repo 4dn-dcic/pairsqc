@@ -181,6 +181,6 @@ if __name__ == '__main__':
    #cis_trans_ratio ( args.pairs, DIST_THRES=5000 )
    #cis_trans_ratio ( args.pairs, DIST_THRES=0 )
    #distance_histogram ( args.pairs )
-   distance_histogram ( args.pairs, args.chrsize, max_logdistance = 16 , min_logdistance = 1 )
+   distance_histogram ( args.pairs, args.chrsize, max_logdistance = 8.4 , min_logdistance = 1 )
 
 
