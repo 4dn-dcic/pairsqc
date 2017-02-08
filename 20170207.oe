@@ -138,3 +138,75 @@ Resource usage summary:
 
 The output (if any) is above this job summary.
 
+Traceback (most recent call last):
+  File "pairsqc", line 184, in <module>
+    distance_histogram ( args.pairs, args.chrsize, max_logdistance = 16 , min_logdistance = 1 )
+  File "pairsqc", line 103, in distance_histogram
+    distance = int( x[pos2_col] ) - int( x[pos1_col] )
+KeyboardInterrupt
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@ottavino002-222.orchestra>
+Subject: Job 867182: <./sample_command.sh> Exited
+
+Job <./sample_command.sh> was submitted from host <loge.orchestra> by user <sl325> in cluster <hms_orchestra>.
+Job was executed on host(s) <ottavino002-222.orchestra>, in queue <short>, as user <sl325> in cluster <hms_orchestra>.
+</home/sl325> was used as the home directory.
+</home/sl325/git/pairsqc> was used as the working directory.
+Started at Wed Feb  8 00:12:32 2017
+Results reported at Wed Feb  8 00:41:23 2017
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+./sample_command.sh
+------------------------------------------------------------
+
+TERM_OWNER: job killed by owner.
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time   :   1697.11 sec.
+    Max Memory :       205 MB
+    Max Swap   :       685 MB
+
+    Max Processes  :         4
+    Max Threads    :         5
+
+The output (if any) is above this job summary.
+
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@ottavino002-231.orchestra>
+Subject: Job 864514: <./sample_command.sh> Exited
+
+Job <./sample_command.sh> was submitted from host <loge.orchestra> by user <sl325> in cluster <hms_orchestra>.
+Job was executed on host(s) <ottavino002-231.orchestra>, in queue <short>, as user <sl325> in cluster <hms_orchestra>.
+</home/sl325> was used as the home directory.
+</home/sl325/git/pairsqc> was used as the working directory.
+Started at Wed Feb  8 00:06:36 2017
+Results reported at Wed Feb  8 00:41:23 2017
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+./sample_command.sh
+------------------------------------------------------------
+
+TERM_OWNER: job killed by owner.
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time   :   2081.15 sec.
+    Max Memory :       205 MB
+    Max Swap   :       686 MB
+
+    Max Processes  :         4
+    Max Threads    :         5
+
+The output (if any) is above this job summary.
+
