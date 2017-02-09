@@ -185,6 +185,6 @@ if __name__ == '__main__':
        os.mkdir(OUTDIR)
 
    cis_trans_ratio ( args.pairs, sample_name = args.sample_name )
-   distance_histogram ( args.pairs, args.chrsize, max_logdistance = 8.4 , min_logdistance = 1 )
+   #distance_histogram ( args.pairs, args.chrsize, max_logdistance = 8.4 , min_logdistance = 1 )
 
 

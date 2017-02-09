@@ -1,9 +1,39 @@
+Pairsqc is a tool for generating a QC report for a Hi-C pairs file.
+
+
+### Dependency
+* Python >=2.7
+* R
+* devtools (R package)
+```
+R CMD Install devtools
+```
+* Nozzle
+```
+#Install Nozzle as follows, outside the pairsqc directory (avoid git clone inside another git repo)
+git clone https://github.com/parklab/nozzle
+cd nozzle
+./install.sh
+```
+
+### usage
+```
+python pairsqc.py --pairs <input_pairsfile> --chrsize <input_chrsizefile>
+Rscript plot.r
+```
+
+### Output
+The python script generates two text output files, `report/cis_to_trans.out` and `report/plot_table.out`.
+The R script generates image files in `report/plots`.
+The output report can be found in `report/pairsqc_report.html`.
+Output text file example : [cis_to_trans.out](report/cis_to_trans.out) [plot_table.out](report/plot_table.out)
+
+
 ### example run
 ```
-python pairsqc.py --pairs ../pairix/samples/merged_nodup.tab.chrblock_sorted.txt.gz --chrsize ~/data/references/hg19.chrom.sizes > out
-Rscript plot.r # assumes the output name is 'out'
+python pairsqc.py --pairs ../pairix/samples/merged_nodup.tab.chrblock_sorted.txt.gz --chrsize ~/data/references/hg19.chrom.size
+Rscript plot.r
 ```
-Output text file example : [out](out)
 
 &nbsp;
 ### QC metrics and plots
