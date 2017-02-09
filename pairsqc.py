@@ -1,7 +1,11 @@
 import pypairix
 import math
+import os
 
 SEPARATOR = '|'
+OUTDIR = 'report'
+CIS_TRANS_OUT_FILE = OUTDIR + '/cis_to_trans.out'
+PLOT_TABLE_OUT_FILE = OUTDIR + '/plot_table.out'
 
 ## pairs ##
 #POS1_COL = 2
@@ -10,16 +14,16 @@ SEPARATOR = '|'
 #STRAND2_COL = 6
 
 ## merged_nodup ##
-#POS1_COL = 2
-#POS2_COL = 6
-#STRAND1_COL = 0
-#STRAND2_COL = 4
+POS1_COL = 2
+POS2_COL = 6
+STRAND1_COL = 0
+STRAND2_COL = 4
 
 ## old merged_nodup ##
-POS1_COL = 3
-POS2_COL = 7
-STRAND1_COL = 1
-STRAND2_COL = 5
+#POS1_COL = 3
+#POS2_COL = 7
+#STRAND1_COL = 1
+#STRAND2_COL = 5
 
 ## pairs
 #orientation_list = ['+-','-+','++','--']
@@ -39,7 +43,7 @@ def get_chr_lens ( chromsize_file ):
     return chrsize
 
 
-def cis_trans_ratio ( pairs_file, DIST_THRES=20000, pos1_col=POS1_COL, pos2_col=POS2_COL, strand1_col=STRAND1_COL, strand2_col=STRAND2_COL ):
+def cis_trans_ratio ( pairs_file, DIST_THRES=20000, pos1_col=POS1_COL, pos2_col=POS2_COL, strand1_col=STRAND1_COL, strand2_col=STRAND2_COL, sample_name = "sample1" ):
     """measure cis/trans ratio for a given pairs file"""
 
     cis=0
@@ -65,9 +69,9 @@ def cis_trans_ratio ( pairs_file, DIST_THRES=20000, pos1_col=POS1_COL, pos2_col=
         else:
             trans += sum(1 for x in it)
     
-    print( "Cis reads\t{}".format(cis) )
-    print( "Trans reads\t{}".format(trans) )
-    print( "Cis/Trans ratio\t{:.3f}".format(cis/(cis+trans)*100) )
+    with open(CIS_TRANS_OUT_FILE,'w') as f:
+        f.write("Cis reads\tTrans reads\tCis/Trans ratio\n") # header
+        f.write("{}\t{}\t{}\t{:.3f}\n".format(sample_name, cis,trans,cis/(cis+trans)*100))
 
 
 def distance_histogram ( pairs_file, chromsize_file, max_logdistance=math.log10(1E5), min_logdistance=math.log10(10), logdistance_binsize=0.1, pos1_col=POS1_COL, pos2_col=POS2_COL, strand1_col=STRAND1_COL, strand2_col=STRAND2_COL, pseudocount=1E-100 ):
@@ -141,31 +145,30 @@ def distance_histogram ( pairs_file, chromsize_file, max_logdistance=math.log10(
 
 
     # print histogram
-    header_str = "distance\t" \
-        + '\t'.join('count.{}'.format(k) for k in orientation_names) \
-        + '\tsum\t' \
-        + '\t'.join('log10count.{}'.format(k) for k in orientation_names) \
-        + '\tlog10sum\t' \
-        + '\t'.join('proportion.{}'.format(k) for k in orientation_names) \
-        + '\tallpossible_sumcount' \
-        + '\tprob' \
-        + '\tlog10prob'
-    print(header_str)
-    for bin_number in range(0, max_bin_number + 1):
-        bin_x = bin_number * logdistance_binsize + logdistance_binsize/2
-        if bin_x <= max_logdistance and bin_x >= min_logdistance:
-            print_str = "{:.3f}\t".format(bin_x)
-            print_str += '\t'.join('{}'.format(count[ori][bin_number]) for ori in orientation_list )
-            print_str += "\t{}\t".format(sumcount[bin_number])
-            print_str += '\t'.join('{:.3f}'.format(log10count[ori][bin_number]) for ori in orientation_list )
-            print_str += "\t{:.3f}\t".format(log10sumcount[bin_number])
-            print_str += '\t'.join('{:.3f}'.format(pcount[ori][bin_number]) for ori in orientation_list )
-            print_str += "\t{:.3E}".format(allpossible_sumcount[bin_number])
-            print_str += "\t{:.3E}".format(prob[bin_number])
-            print_str += "\t{:.3f}".format(log10prob[bin_number])
-            print( print_str )
-
-
+    with open(PLOT_TABLE_OUT_FILE,'w') as f:
+        header_str = "distance\t" \
+            + '\t'.join('count.{}'.format(k) for k in orientation_names) \
+            + '\tsum\t' \
+            + '\t'.join('log10count.{}'.format(k) for k in orientation_names) \
+            + '\tlog10sum\t' \
+            + '\t'.join('proportion.{}'.format(k) for k in orientation_names) \
+            + '\tallpossible_sumcount' \
+            + '\tprob' \
+            + '\tlog10prob\n'
+        f.write(header_str)
+        for bin_number in range(0, max_bin_number + 1):
+            bin_x = bin_number * logdistance_binsize + logdistance_binsize/2
+            if bin_x <= max_logdistance and bin_x >= min_logdistance:
+                print_str = "{:.3f}\t".format(bin_x)
+                print_str += '\t'.join('{}'.format(count[ori][bin_number]) for ori in orientation_list )
+                print_str += "\t{}\t".format(sumcount[bin_number])
+                print_str += '\t'.join('{:.3f}'.format(log10count[ori][bin_number]) for ori in orientation_list )
+                print_str += "\t{:.3f}\t".format(log10sumcount[bin_number])
+                print_str += '\t'.join('{:.3f}'.format(pcount[ori][bin_number]) for ori in orientation_list )
+                print_str += "\t{:.3E}".format(allpossible_sumcount[bin_number])
+                print_str += "\t{:.3E}".format(prob[bin_number])
+                print_str += "\t{:.3f}\n".format(log10prob[bin_number])
+                f.write( print_str )
 
 
 if __name__ == '__main__':
@@ -175,12 +178,13 @@ if __name__ == '__main__':
    parser = argparse.ArgumentParser(description = 'QC for Pairs')
    parser.add_argument('--pairs', help = "input pairs file")
    parser.add_argument('--chrsize', help = "input chromsize file")
+   parser.add_argument('--sample_name', help = "Name of the sample")
    args = parser.parse_args()
 
-   #cis_trans_ratio ( args.pairs )
-   #cis_trans_ratio ( args.pairs, DIST_THRES=5000 )
-   #cis_trans_ratio ( args.pairs, DIST_THRES=0 )
-   #distance_histogram ( args.pairs )
+   if not os.path.exists(OUTDIR):
+       os.mkdir(OUTDIR)
+
+   cis_trans_ratio ( args.pairs, sample_name = args.sample_name )
    distance_histogram ( args.pairs, args.chrsize, max_logdistance = 8.4 , min_logdistance = 1 )
 
 
