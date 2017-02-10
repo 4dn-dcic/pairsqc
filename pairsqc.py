@@ -71,7 +71,7 @@ def cis_trans_ratio ( pairs_file, DIST_THRES=20000, pos1_col=POS1_COL, pos2_col=
     
     with open(CIS_TRANS_OUT_FILE,'w') as f:
         f.write("Cis reads\tTrans reads\tCis/Trans ratio\n") # header
-        f.write("{}\t{}\t{}\t{:.3f}\n".format(sample_name, cis,trans,cis/(cis+trans)*100))
+        f.write("{}\t{:,}\t{:,}\t{:.3f}\n".format(sample_name, cis,trans,cis/(cis+trans)*100))
 
 
 def distance_histogram ( pairs_file, chromsize_file, max_logdistance=math.log10(1E5), min_logdistance=math.log10(10), logdistance_binsize=0.1, pos1_col=POS1_COL, pos2_col=POS2_COL, strand1_col=STRAND1_COL, strand2_col=STRAND2_COL, pseudocount=1E-100 ):
