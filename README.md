@@ -24,8 +24,22 @@ Pairsqc is a tool for generating a QC report for a Hi-C pairs file.
   ```
 
 ### Usage
+1) pairsqc.py
 ```
-python pairsqc.py --pairs <input_pairsfile> --chrsize <input_chrsizefile>
+usage: pairsqc.py [-h] [--pairs PAIRS] [--chrsize CHRSIZE]
+                  [--input_type INPUT_TYPE]
+
+QC for Pairs
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --pairs PAIRS         input pairs file
+  --chrsize CHRSIZE     input chromsize file
+  --input_type INPUT_TYPE
+                        input pairs file type (P,M,OM)
+```
+2) plot.r
+```
 Rscript plot.r
 ```
 

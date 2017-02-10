@@ -7,7 +7,6 @@ OUTDIR = 'report'
 CIS_TRANS_OUT_FILE = OUTDIR + '/cis_to_trans.out'
 PLOT_TABLE_OUT_FILE = OUTDIR + '/plot_table.out'
 
-# I'm testing this using old merged nodup but later we will switch to pairs.
 
 class ColIndices(object):
     """Column indices for position1, position2, strand1 and strand2, 0-based"""
@@ -227,12 +226,27 @@ if __name__ == '__main__':
    parser = argparse.ArgumentParser(description = 'QC for Pairs')
    parser.add_argument('--pairs', help = "input pairs file")
    parser.add_argument('--chrsize', help = "input chromsize file")
+   parser.add_argument('--input_type', help = "input pairs file type (P,M,OM)")
    args = parser.parse_args()
 
    if not os.path.exists(OUTDIR):
        os.mkdir(OUTDIR)
 
-   cis_trans_ratio (args.pairs, cols = cols_merged_nodups )
-   distance_histogram (args.pairs, args.chrsize, max_logdistance = 8.4 , min_logdistance = 1, cols = cols_merged_nodups, orientation_list = orientation_list_merged_nodups)
+   # input type selection
+   if args.input_type is 'P':
+       cols = cols_pairs
+       orientation_list = orientation_list_pairs
+   elif args.input_type is 'M':
+       cols = cols_merged_nodups
+       orientation_list = orientation_list_merged_nodups
+   elif args.input_type is 'OM':
+       cols = cols_old_merged_nodups 
+       orientation_list = orientation_list_merged_nodups
+   else:
+       print("Unknown input type"); exit(1)
+
+   # get the stats
+   cis_trans_ratio (args.pairs, cols = cols )
+   distance_histogram (args.pairs, args.chrsize, max_logdistance = 8.4 , min_logdistance = 1, cols = cols, orientation_list = orientation_list)
 
 
