@@ -189,11 +189,13 @@ def cis_trans_ratio (pairs_file, DIST_THRES=20000, cols= cols_pairs):
                     cts.cis_short += 1
         else:
             cts.trans += sum(1 for x in it)
-
     cts.calculate_total()
     
+    # print stats
     with open(CIS_TRANS_OUT_FILE,'w') as f:
         cts.print(f)
+
+
 def distance_histogram (pairs_file, chromsize_file, cols=cols_pairs, orientation_list = orientation_list_pairs, max_logdistance=math.log10(1E5), min_logdistance=math.log10(10), log_binsize=0.1):
     """create a log10-scale binned histogram table for read separation distance histogram
     The histogram is stratefied by read orientation (4 different orientations)
