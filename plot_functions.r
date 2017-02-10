@@ -10,7 +10,7 @@ exp_axis<-function(x, axis_ind){
 
 pngpdf.nodate <- function(f,...) pngpdf(f,...,add.date=FALSE)
 
-plot_orientation_proportion_vs_distance <- function(x, xlim=c(2,4), plt=c(0.05,0.95,0.05,0.95), no_xlabel=FALSE){
+plot_orientation_proportion_vs_distance <- function(x, xlim=c(2,4), plt=c(0.2,0.95,0.2,0.95), no_xlabel=FALSE){
   par(plt=plt)
   matplot(x$distance,x[,12:15],pch=19,type='o',xlab="", ylab="Proportion",lwd=1,lty=1, axes=F, xlim=xlim)
   exp_axis(xlim,1)
@@ -21,9 +21,10 @@ plot_orientation_proportion_vs_distance <- function(x, xlim=c(2,4), plt=c(0.05,0
 } 
 
 
-plot_orientation_log10count_vs_distance <- function(x, xlim=c(2,4), plt=c(0.05,0.95,0.05,0.95), no_xlabel=FALSE){
+plot_orientation_log10count_vs_distance <- function(x, xlim=c(2,4), plt=c(0.2,0.95,0.2,0.95), no_xlabel=FALSE){
   par(plt=plt)
-  ylim=c(0,max(x[,7:10]))
+  ind = which(x$distance>=xlim[1] & x$distance<=xlim[2])
+  ylim=range(x[ind,7:10])
   matplot(x$distance,x[,7:10],pch=19,type='o',xlab="", ylab="Contact frequency",lwd=1,lty=1,ylim=ylim, axes=F, xlim=xlim)
   exp_axis(xlim,1)
   exp_axis(ylim,2)
@@ -33,7 +34,7 @@ plot_orientation_log10count_vs_distance <- function(x, xlim=c(2,4), plt=c(0.05,0
 }
 
 
-plot_contact_probability_vs_distance <- function(x, xlim=c(3.2,8), plt=c(0.05,0.95,0.05,0.95), no_xlabel=FALSE) {
+plot_contact_probability_vs_distance <- function(x, xlim=c(3.2,8), plt=c(0.2,0.95,0.2,0.95), no_xlabel=FALSE) {
   par(plt=plt)
   ylim=range(x[,18])
   plot(x$distance,x[,18],pch=19,type='o',xlab="", ylab="Contact probability",lwd=1,lty=1,ylim=ylim,axes=F,xlim=xlim)
@@ -56,7 +57,7 @@ plot_contact_probability_vs_distance <- function(x, xlim=c(3.2,8), plt=c(0.05,0.
 
 # entropy
 entropy<-function(xx)-sum(xx*log2(xx))
-plot_entropy <- function(x, xlim=c(2,4), plt=c(0.05,0.95,0.05,0.95)){
+plot_entropy <- function(x, xlim=c(2,4), plt=c(0.2,0.95,0.2,0.95)){
   par(plt=plt)
   entropies=apply(x[,12:15],1,entropy)
   plot(entropies,type='o',pch=19,ylab="entropy",xlab="distance",xlim=xlim,axes=F)
@@ -65,7 +66,7 @@ plot_entropy <- function(x, xlim=c(2,4), plt=c(0.05,0.95,0.05,0.95)){
 }
 
 
-plot_sd_with_cutoff <- function(x, xlim=c(2,4), plt=c(0.05,0.95,0.05,0.95)){
+plot_sd_with_cutoff <- function(x, xlim=c(2,4), plt=c(0.2,0.95,0.2,0.95)){
   par(plt=plt)
   sds=apply(x[,12:15],1,sd)
   plot(x$distance, sds,type='o',pch=19,ylab="sd",xlab="distance",xlim=xlim,axes=F)
