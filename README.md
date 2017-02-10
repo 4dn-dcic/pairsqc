@@ -52,7 +52,7 @@ The output report can be found in `report/pairsqc_report.html`.
 
 ### Example run
 ```
-python pairsqc.py --pairs test_samples/merged_nodup.tab.chrblock_sorted.txt.gz --chrsize test_samples/hg19.chrom.size
+python pairsqc.py --pairs test_samples/merged_nodup.tab.chrblock_sorted.txt.gz --chrsize test_samples/hg19.chrom.size --input_type M
 Rscript plot.r
 zip report.zip report # if you want to create a zip file for the report.
 ```
