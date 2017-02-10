@@ -26,17 +26,19 @@ Pairsqc is a tool for generating a QC report for a Hi-C pairs file.
 ### Usage
 1) pairsqc.py
 ```
-usage: pairsqc.py [-h] [--pairs PAIRS] [--chrsize CHRSIZE]
-                  [--input_type INPUT_TYPE]
+usage: pairsqc.py [-h] [-p PAIRS] [-c CHRSIZE] [-t INPUT_TYPE]
 
 QC for Pairs
 
 optional arguments:
   -h, --help            show this help message and exit
-  --pairs PAIRS         input pairs file
-  --chrsize CHRSIZE     input chromsize file
-  --input_type INPUT_TYPE
-                        input pairs file type (P,M,OM)
+  -p PAIRS, --pairs PAIRS
+                        input pairs file
+  -c CHRSIZE, --chrsize CHRSIZE
+                        input chromsize file
+  -t INPUT_TYPE, --input_type INPUT_TYPE
+                        input file type (P:pairs, M:merged_nodups,
+                        OM:old_merged_nodups)
 ```
 2) plot.r
 ```
@@ -52,7 +54,7 @@ The output report can be found in `report/pairsqc_report.html`.
 
 ### Example run
 ```
-python pairsqc.py --pairs test_samples/merged_nodup.tab.chrblock_sorted.txt.gz --chrsize test_samples/hg19.chrom.size --input_type M
+python pairsqc.py -p test_samples/merged_nodup.tab.chrblock_sorted.txt.gz -c test_samples/hg19.chrom.size -t M
 Rscript plot.r
 zip report.zip report # if you want to create a zip file for the report.
 ```

@@ -224,9 +224,9 @@ if __name__ == '__main__':
    import argparse
 
    parser = argparse.ArgumentParser(description = 'QC for Pairs')
-   parser.add_argument('--pairs', help = "input pairs file")
-   parser.add_argument('--chrsize', help = "input chromsize file")
-   parser.add_argument('--input_type', help = "input pairs file type (P,M,OM)")
+   parser.add_argument('-p','--pairs', help = "input pairs file")
+   parser.add_argument('-c','--chrsize', help = "input chromsize file")
+   parser.add_argument('-t','--input_type', help = "input file type (P:pairs, M:merged_nodups, OM:old_merged_nodups)")
    args = parser.parse_args()
 
    if not os.path.exists(OUTDIR):
