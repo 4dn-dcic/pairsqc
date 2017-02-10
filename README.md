@@ -4,17 +4,18 @@ Pairsqc is a tool for generating a QC report for a Hi-C pairs file.
 ### Dependency
 * Python >=2.7
 * R
-* devtools (R package)
-```
-R CMD Install devtools
-```
-* Nozzle
-```
-#Install Nozzle as follows, outside the pairsqc directory (avoid git clone inside another git repo)
-git clone https://github.com/parklab/nozzle
-cd nozzle
-./install.sh
-```
+* R packages
+  * devtools (R package)
+  ```
+  R CMD Install devtools
+  ```
+  * Nozzle
+  ```
+  #Install Nozzle as follows, outside the pairsqc directory (avoid git clone inside another git repo)
+  git clone https://github.com/parklab/nozzle
+  cd nozzle
+  ./install.sh
+  ```
 
 ### usage
 ```
