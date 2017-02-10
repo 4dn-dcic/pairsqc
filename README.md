@@ -33,8 +33,8 @@ Rscript plot.r
 The python script generates two text output files, `report/cis_to_trans.out` and `report/plot_table.out`.
 The R script generates image files in `report/plots`.
 The output report can be found in `report/pairsqc_report.html`.
-Output text file example : [cis_to_trans.out](report/cis_to_trans.out) [plot_table.out](report/plot_table.out)
-Output report example : [report](report/pairsqc_report.html)
+* Output text file example : [cis_to_trans.out](report/cis_to_trans.out) [plot_table.out](report/plot_table.out)
+* Output report example : [report](report/pairsqc_report.html)
 
 ### Example run
 ```
@@ -55,8 +55,10 @@ zip report.zip report # if you want to create a zip file for the report.
 * For each bin, the number of reads with each of the four orientations is obtained. To compute proportion, each count is supplemented with a pseudocount of 1E-100, and divided by the sum over the four orientations for that bin.
 * The first bin where the four orientations converge is called resolution, and is determined by using standard deviation of the proportions < 0.02.
 
-#### Number of reads versus genomic separation, stratified by orientation
+![](report/plots/proportion.png)
 
+#### Number of reads versus genomic separation, stratified by orientation
+* Similar to Proportion of read orientation versus genomic separation, except the actual read counts are displayed instead of proportions.
 ![](report/plots/log10counts.png)
 
 
