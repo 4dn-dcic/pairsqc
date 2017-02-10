@@ -17,7 +17,6 @@ class ColIndices(object):
         self.strand1 = strand1
         self.strand2 = strand2
 
-
 ## column indices per file type
 cols_pairs = ColIndices(2, 4, 5, 6)
 cols_merged_nodups = ColIndices(2, 6, 0, 4)
@@ -44,53 +43,24 @@ class GenomeSize(object):
         self.nChr = len(self.chrsize)
 
 
-def get_distance_and_orientation (line, cols):
-    """return distance and orientation 
-    given a list representing a line from the pairs input file
-    and a ColIndices object
-    """
-    distance = int(line[cols.pos2]) - int(line[cols.pos1])
-    
-    # distance will always be > 0 for upper triangle, but in case it is not true.
-    if distance > 0:
-        orientation = str(line[cols.strand1]) + str(line[cols.strand2])
-    else:
-        orientation = str(line[cols.strand2]) + str(line[cols.strand1])
-        distance = abs(distance)
+class CisTransStat(object):
+    """Summary statistics including cis-trans ratio"""
 
-    return(distance, orientation)
+    def __init__(self):
+        self.cis = 0
+        self.trans = 0
+        self.cis_short = 0
+        self.total = 0
 
+    def calculate_total(self):
+        self.total = self.cis + self.cis_short + self.trans
 
-def cis_trans_ratio (pairs_file, DIST_THRES=20000, cols= cols_pairs):
-    """measure cis/trans ratio for a given pairs file"""
-
-    cis=0
-    trans=0
-    cis_short=0
-     
-    tb=pypairix.open(pairs_file )
-    chrplist = tb.get_blocknames()
-    for chrp in chrplist:
-        it = tb.querys2D(chrp )
-        chr1, chr2 = chrp.split(SEPARATOR )
-        if chr1 == chr2:
-            for x in it:
-                distance, orientation = get_distance_and_orientation (x, cols)
-                if distance > DIST_THRES:
-                    cis += 1
-                else:
-                    cis_short += 1
-        else:
-            trans += sum(1 for x in it)
-
-    total = cis + cis_short + trans
-    
-    with open(CIS_TRANS_OUT_FILE,'w') as f:
-         f.write("Total reads\t{:,}\n".format(total))
-         f.write("Short cis reads (<20kb)\t{:,}\n".format(cis_short))
-         f.write("Cis reads (>20kb)\t{:,}\n".format(cis))
-         f.write("Trans reads\t{:,}\n".format(trans))
-         f.write("Cis/Trans ratio\t{:.3f}\n".format(cis/(cis+trans)*100))
+    def print(self, fout):
+        fout.write("Total reads\t{:,}\n".format(self.total))
+        fout.write("Short cis reads (<20kb)\t{:,}\n".format(self.cis_short))
+        fout.write("Cis reads (>20kb)\t{:,}\n".format(self.cis))
+        fout.write("Trans reads\t{:,}\n".format(self.trans))
+        fout.write("Cis/Trans ratio\t{:.3f}\n".format(self.cis/(self.cis+self.trans)*100))
 
 
 class SeparationStat(object):
@@ -136,7 +106,6 @@ class SeparationStat(object):
         self.prob = self.sumcount / self.allpossible_sumcount / bin_size 
         self.log10prob = math.log10(self.prob + self.pseudocount)
 
-
     def print_content(self, fout, bin_mid):
         print_str = "{:.3f}\t".format(bin_mid)
         print_str += '\t'.join('{}'.format(self.count[ori]) for ori in self.orientation_list )
@@ -148,7 +117,6 @@ class SeparationStat(object):
         print_str += "\t{:.3E}".format(self.prob)
         print_str += "\t{:.3f}\n".format(self.log10prob)
         fout.write(print_str)
-
 
     def print_header(fout):
         header_str = "distance\t" \
@@ -163,6 +131,69 @@ class SeparationStat(object):
         fout.write(header_str)
 
 
+class DistanceBin(object):
+    """class related to conversion between distance, log distance, distance bin number, bin size, etc"""
+
+    def __init__(self, min_logdistance, max_logdistance, log_binsize):
+        self.min_logdistance = min_logdistance
+        self.max_logdistance = max_logdistance
+        self.log_binsize = log_binsize
+        self.max_bin_number = int( ( max_logdistance - log_binsize / 2 ) / log_binsize )
+        self.range = range(0, self.max_bin_number+1)
+
+    def get_bin_size(self, bin_mid):
+        return(10**( bin_mid + self.log_binsize/2 ) - 10**( bin_mid - self.log_binsize/2 ))
+
+    def get_bin_mid(self, bin_number):
+        """return midpoint of a bin at log scale"""
+        return(bin_number * self.log_binsize + self.log_binsize/2)
+
+    def get_bin_number(self, distance):
+        log_distance = math.log10(distance) 
+        bin_number = int(log_distance / self.log_binsize)
+        return(bin_number) 
+
+
+def get_distance_and_orientation (line, cols):
+    """return distance and orientation 
+    given a list representing a line from the pairs input file and a ColIndices object
+    """
+    distance = int(line[cols.pos2]) - int(line[cols.pos1])
+    
+    # distance will always be > 0 for upper triangle, but in case it is not true.
+    if distance > 0:
+        orientation = str(line[cols.strand1]) + str(line[cols.strand2])
+    else:
+        orientation = str(line[cols.strand2]) + str(line[cols.strand1])
+        distance = abs(distance)
+
+    return(distance, orientation)
+
+
+def cis_trans_ratio (pairs_file, DIST_THRES=20000, cols= cols_pairs):
+    """measure cis/trans ratio for a given pairs file"""
+
+    cts = CisTransStat()
+     
+    tb=pypairix.open(pairs_file)
+    chrplist = tb.get_blocknames()
+    for chrp in chrplist:
+        it = tb.querys2D(chrp)
+        chr1, chr2 = chrp.split(SEPARATOR)
+        if chr1 == chr2:
+            for x in it:
+                distance = get_distance_and_orientation(x, cols)[0]
+                if distance > DIST_THRES:
+                    cts.cis += 1
+                else:
+                    cts.cis_short += 1
+        else:
+            cts.trans += sum(1 for x in it)
+
+    cts.calculate_total()
+    
+    with open(CIS_TRANS_OUT_FILE,'w') as f:
+        cts.print(f)
 def distance_histogram (pairs_file, chromsize_file, cols=cols_pairs, orientation_list = orientation_list_pairs, max_logdistance=math.log10(1E5), min_logdistance=math.log10(10), log_binsize=0.1):
     """create a log10-scale binned histogram table for read separation distance histogram
     The histogram is stratefied by read orientation (4 different orientations)
@@ -170,12 +201,11 @@ def distance_histogram (pairs_file, chromsize_file, cols=cols_pairs, orientation
     Bin is represented by the mid value at the log10 scale. 
     log_binsize: distance bin size in log10 scale.
     """
-
     gs = GenomeSize(chromsize_file)
-    max_bin_number = int( ( max_logdistance - log_binsize / 2 ) / log_binsize )
+    bins = DistanceBin(min_logdistance, max_logdistance, log_binsize)
 
     ss = []
-    for a in range(0, max_bin_number+1):
+    for a in bins.range:
         ss.append(SeparationStat(orientation_list))
 
     tb=pypairix.open( pairs_file )
@@ -193,29 +223,28 @@ def distance_histogram (pairs_file, chromsize_file, cols=cols_pairs, orientation
  
                 # remove zero distance, count.
                 if distance > 0:
-                    log_distance = math.log10( distance ) 
-                    bin_number = int( log_distance / log_binsize ) 
-                    if bin_number <= max_bin_number:
+                    bin_number = bins.get_bin_number(distance)
+                    if bin_number <= bins.max_bin_number:
                         ss[bin_number].increment(orientation)
 
     # calculate histogram in log10 counts and proportion
-    for bin_number in range(0, max_bin_number + 1):
+    for bin_number in bins.range:
         ss[bin_number].calculate_log10count()
         ss[bin_number].calculate_log10sumcount()
         ss[bin_number].calculate_pcount()
 
     # calculate contact probability
-    for bin_number in range(0, max_bin_number + 1):
-        bin_mid = bin_number * log_binsize + log_binsize/2
-        bin_size = 10**( bin_mid + log_binsize/2 ) - 10**( bin_mid - log_binsize/2 )
+    for bin_number in bins.range:
+        bin_mid = bins.get_bin_mid(bin_number)
+        bin_size = bins.get_bin_size(bin_mid)
         ss[bin_number].calculate_contact_probability(bin_mid, bin_size, gs)
 
     # print histogram
     with open(PLOT_TABLE_OUT_FILE,'w') as f:
         SeparationStat.print_header(f)
-        for bin_number in range(0, max_bin_number + 1):
-            bin_mid = bin_number * log_binsize + log_binsize/2
-            if bin_mid <= max_logdistance and bin_mid >= min_logdistance:
+        for bin_number in bins.range:
+            bin_mid = bins.get_bin_mid(bin_number)
+            if bin_mid <= bins.max_logdistance and bin_mid >= bins.min_logdistance:
                 ss[bin_number].print_content(f, bin_mid)
 
 
