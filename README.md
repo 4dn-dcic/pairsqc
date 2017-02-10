@@ -22,6 +22,12 @@ Pairsqc is a tool for generating a QC report for a Hi-C pairs file.
   cd nozzle
   ./install.sh
   ```
+  
+## Installation
+```
+# no need to install, just download
+git clone https://github.com/4dn-dcic/pairsqc
+```
 
 ### Usage
 1) pairsqc.py
