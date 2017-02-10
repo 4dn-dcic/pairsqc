@@ -69,7 +69,7 @@ plot_sd_with_cutoff <- function(x, xlim=c(2,4), plt=c(0.2,0.8,0.2,0.8)){
   par(plt=plt)
   sds=apply(x[,12:15],1,sd)
   plot(x$distance, sds,type='o',pch=19,ylab="sd",xlab="distance",xlim=xlim,axes=F)
-  exp_axis(x$distance,1)
+  exp_axis(xlim,1)
   axis(2)
   box()
   cut = min(which(sds<0.02))
