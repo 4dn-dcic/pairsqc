@@ -6,9 +6,9 @@ x=read.table("report/plot_table.out",skip=0,sep="\t",stringsAsFactors=F,header=T
 dir.create("report/plots", showWarnings = FALSE, recursive = TRUE)
 setwd("report/plots")
 pngpdf.nodate( function(){
-  plot_orientation_proportion_vs_distance(x, plt=c(0.2,0.8,0.45,0.9), no_xlabel=T)
+  plot_orientation_proportion_vs_distance(x, plt=c(0.05,0.95,0.45,0.95), no_xlabel=T)
   par(new=T)
-  plot_sd_with_cutoff(x, plt=c(0.2,0.8,0.2,0.35))
+  plot_sd_with_cutoff(x, plt=c(0.05,0.95,0.05,0.35))
 }, "proportion" )
 
 pngpdf.nodate( function()plot_orientation_log10count_vs_distance(x) , "log10counts" )
