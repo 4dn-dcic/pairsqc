@@ -4,8 +4,14 @@ Pairsqc is a tool for generating a QC report for a Hi-C pairs file.
 ### Dependency
 * Python >=2.7
 * R
+* Python packages
+  * pypairix
+  ```
+  pip install pypairix
+  ```
+  
 * R packages
-  * devtools (R package)
+  * devtools
   ```
   R CMD Install devtools
   ```
@@ -17,7 +23,7 @@ Pairsqc is a tool for generating a QC report for a Hi-C pairs file.
   ./install.sh
   ```
 
-### usage
+### Usage
 ```
 python pairsqc.py --pairs <input_pairsfile> --chrsize <input_chrsizefile>
 Rscript plot.r
@@ -28,12 +34,13 @@ The python script generates two text output files, `report/cis_to_trans.out` and
 The R script generates image files in `report/plots`.
 The output report can be found in `report/pairsqc_report.html`.
 Output text file example : [cis_to_trans.out](report/cis_to_trans.out) [plot_table.out](report/plot_table.out)
+Output report example : [report](report/pairsqc_report.html)
 
-
-### example run
+### Example run
 ```
 python pairsqc.py --pairs ../pairix/samples/merged_nodup.tab.chrblock_sorted.txt.gz --chrsize ~/data/references/hg19.chrom.size
 Rscript plot.r
+zip report.zip report # if you want to create a zip file for the report.
 ```
 
 &nbsp;
@@ -48,8 +55,10 @@ Rscript plot.r
 * For each bin, the number of reads with each of the four orientations is obtained. To compute proportion, each count is supplemented with a pseudocount of 1E-100, and divided by the sum over the four orientations for that bin.
 * The first bin where the four orientations converge is called resolution, and is determined by using standard deviation of the proportions < 0.02.
 
-![](plots/proportion.20170208.png)
-![](plots/sd_w_cut.20170208.png)
+#### Number of reads versus genomic separation, stratified by orientation
+
+![](report/plots/log10counts.png)
+
 
 #### Contact propability versus genomic separation
 * s = 5'-5' separation of an intrachromosomal read.
@@ -59,7 +68,7 @@ Rscript plot.r
   * bin_size is computed as max distance - min distance (e.g. for bin 10^2.8 ~ 10^ 2.9, the binsize is 10^2.9 - 10^2.8).
 * Slope of the region 10^4 ~ 10^5.5 is displayed.
 
-![](plots/log10prob.20170208.png)
+![](report/plots/log10prob.png)
 
 #### Speed
 2.7sec/M reads on Macbook Air with 2.2 GHz Intel Core i7.
