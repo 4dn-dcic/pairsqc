@@ -34,7 +34,7 @@ The python script generates two text output files, `report/cis_to_trans.out` and
 The R script generates image files in `report/plots`.
 The output report can be found in `report/pairsqc_report.html`.
 * Output text file example : [cis_to_trans.out](report/cis_to_trans.out) [plot_table.out](report/plot_table.out)
-* Output report example : [report](report/pairsqc_report.html)
+* Output report example : [report](report/pairsqc_report.html) : To see a rendered version, download `report.zip`, uncompress, and open `report/pairsqc_report.html`.
 
 ### Example run
 ```
