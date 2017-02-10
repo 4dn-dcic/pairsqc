@@ -196,7 +196,7 @@ def cis_trans_ratio (pairs_file, DIST_THRES=20000, cols= cols_pairs):
         cts.print(f)
 
 
-def distance_histogram (pairs_file, chromsize_file, cols=cols_pairs, orientation_list = orientation_list_pairs, max_logdistance=math.log10(1E5), min_logdistance=math.log10(10), log_binsize=0.1):
+def distance_histogram (pairs_file, chromsize_file, cols=cols_pairs, orientation_list = orientation_list_pairs, max_logdistance=8.4, min_logdistance=1, log_binsize=0.1):
     """create a log10-scale binned histogram table for read separation distance histogram
     The histogram is stratefied by read orientation (4 different orientations)
     The table includes raw counts, log10 counts (pseudocounts added), contact probability, log10 contact probability, and proportions for orientation (pseudocounts added)
@@ -278,6 +278,6 @@ if __name__ == '__main__':
 
    # get the stats
    cis_trans_ratio (args.pairs, cols = cols )
-   distance_histogram (args.pairs, args.chrsize, max_logdistance = 8.4 , min_logdistance = 1, cols = cols, orientation_list = orientation_list)
+   distance_histogram (args.pairs, args.chrsize, cols = cols, orientation_list = orientation_list)
 
 
