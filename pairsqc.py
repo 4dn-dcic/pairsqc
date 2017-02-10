@@ -43,7 +43,7 @@ def get_chr_lens ( chromsize_file ):
     return chrsize
 
 
-def cis_trans_ratio ( pairs_file, DIST_THRES=20000, pos1_col=POS1_COL, pos2_col=POS2_COL, strand1_col=STRAND1_COL, strand2_col=STRAND2_COL, sample_name = "sample1" ):
+def cis_trans_ratio ( pairs_file, DIST_THRES=20000, pos1_col=POS1_COL, pos2_col=POS2_COL, strand1_col=STRAND1_COL, strand2_col=STRAND2_COL):
     """measure cis/trans ratio for a given pairs file"""
 
     cis=0
@@ -70,8 +70,9 @@ def cis_trans_ratio ( pairs_file, DIST_THRES=20000, pos1_col=POS1_COL, pos2_col=
             trans += sum(1 for x in it)
     
     with open(CIS_TRANS_OUT_FILE,'w') as f:
-        f.write("Cis reads\tTrans reads\tCis/Trans ratio\n") # header
-        f.write("{}\t{:,}\t{:,}\t{:.3f}\n".format(sample_name, cis,trans,cis/(cis+trans)*100))
+         f.write("Cis reads\t{:,}\n".format(cis))
+         f.write("Trans reads\t{:,}\n".format(trans))
+         f.write("Cis/Trans ratio\t{:.3f}\n".format(cis/(cis+trans)*100))
 
 
 def distance_histogram ( pairs_file, chromsize_file, max_logdistance=math.log10(1E5), min_logdistance=math.log10(10), logdistance_binsize=0.1, pos1_col=POS1_COL, pos2_col=POS2_COL, strand1_col=STRAND1_COL, strand2_col=STRAND2_COL, pseudocount=1E-100 ):
@@ -178,13 +179,12 @@ if __name__ == '__main__':
    parser = argparse.ArgumentParser(description = 'QC for Pairs')
    parser.add_argument('--pairs', help = "input pairs file")
    parser.add_argument('--chrsize', help = "input chromsize file")
-   parser.add_argument('--sample_name', help = "Name of the sample")
    args = parser.parse_args()
 
    if not os.path.exists(OUTDIR):
        os.mkdir(OUTDIR)
 
-   cis_trans_ratio ( args.pairs, sample_name = args.sample_name )
-   #distance_histogram ( args.pairs, args.chrsize, max_logdistance = 8.4 , min_logdistance = 1 )
+   cis_trans_ratio ( args.pairs )
+   distance_histogram ( args.pairs, args.chrsize, max_logdistance = 8.4 , min_logdistance = 1 )
 
 

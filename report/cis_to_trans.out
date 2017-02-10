@@ -1,2 +1,3 @@
-Cis reads	Trans reads	Cis/Trans ratio
-sample1	23,462,937	12,342,386	65.529
+Cis reads	23,462,937
+Trans reads	12,342,386
+Cis/Trans ratio	65.529

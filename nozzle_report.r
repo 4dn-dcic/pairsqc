@@ -18,7 +18,8 @@ generate_pairsqc_report <- function ( sample_name = NA) {
   s3 <- newSection( "Number of reads versus genomic separation, stratified by read orientation" );
   s4 <- newSection( "Contact probability versus genomic separation" );
   
-  tableData1=read.table('cis_to_trans.out',stringsAsFactors=F, header=T, sep="\t")
+  tableData1=read.table('cis_to_trans.out',stringsAsFactors=F, header=F, sep="\t")
+  colnames(tableData1) = c('QC field','value')
   t1 <- newTable( tableData1, significantDigits=0, exportId="TABLE_1", "Cis-to-trans ratio" );
   
   png2= 'plots/proportion.png'
