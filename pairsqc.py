@@ -7,6 +7,8 @@ OUTDIR = 'report'
 CIS_TRANS_OUT_FILE = OUTDIR + '/cis_to_trans.out'
 PLOT_TABLE_OUT_FILE = OUTDIR + '/plot_table.out'
 
+# I'm testing this using old merged nodup but later we will switch to pairs.
+
 ## pairs ##
 #POS1_COL = 2
 #POS2_COL = 4
