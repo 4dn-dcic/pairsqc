@@ -3,9 +3,8 @@ import math
 import os
 
 SEPARATOR = '|'
-OUTDIR = 'report'
-CIS_TRANS_OUT_FILE = OUTDIR + '/cis_to_trans.out'
-PLOT_TABLE_OUT_FILE = OUTDIR + '/plot_table.out'
+CIS_TRANS_OUT_FILE_NAME =  '/cis_to_trans.out'
+PLOT_TABLE_OUT_FILE_NAME = '/plot_table.out'
 
 
 class ColIndices(object):
@@ -220,7 +219,7 @@ def get_distance_and_orientation (line, cols):
     return(distance, orientation)
 
 
-def cis_trans_ratio (pairs_file, DIST_THRES=20000, cols= cols_pairs):
+def cis_trans_ratio (pairs_file, outdir='report', DIST_THRES=20000, cols= cols_pairs):
     """measure cis/trans ratio for a given pairs file"""
 
     cts = CisTransStat()
@@ -242,11 +241,11 @@ def cis_trans_ratio (pairs_file, DIST_THRES=20000, cols= cols_pairs):
     cts.calculate_total()
     
     # print stats
-    with open(CIS_TRANS_OUT_FILE,'w') as f:
+    with open(outdir + '/' + CIS_TRANS_OUT_FILE_NAME,'w') as f:
         cts.print_stat(f)
 
 
-def distance_histogram (pairs_file, chromsize_file, cols=cols_pairs, orientation_list = orientation_list_pairs, max_logdistance=8.4, min_logdistance=1, log_binsize=0.1):
+def distance_histogram (pairs_file, chromsize_file, outdir='report', cols=cols_pairs, orientation_list = orientation_list_pairs, max_logdistance=8.4, min_logdistance=1, log_binsize=0.1):
     """create a log10-scale binned histogram table for read separation distance histogram
     The histogram is stratefied by read orientation (4 different orientations)
     The table includes raw counts, log10 counts (pseudocounts added), contact probability, log10 contact probability, and proportions for orientation (pseudocounts added)
@@ -297,7 +296,7 @@ def distance_histogram (pairs_file, chromsize_file, cols=cols_pairs, orientation
         ss[bin_number].calculate_contact_probability(bin_mid, bin_size)
 
     # print histogram
-    with open(PLOT_TABLE_OUT_FILE,'w') as f:
+    with open(outdir + '/' + PLOT_TABLE_OUT_FILE_NAME,'w') as f:
         ss[0].print_header(f)
         for bin_number in bins.range:
             bin_mid = bins.get_bin_mid(bin_number)
@@ -307,32 +306,37 @@ def distance_histogram (pairs_file, chromsize_file, cols=cols_pairs, orientation
 
 if __name__ == '__main__':
 
-   import argparse
-
-   parser = argparse.ArgumentParser(description = 'QC for Pairs')
-   parser.add_argument('-p','--pairs', help = "input pairs file")
-   parser.add_argument('-c','--chrsize', help = "input chromsize file")
-   parser.add_argument('-t','--input_type', help = "input file type (P:pairs, M:merged_nodups, OM:old_merged_nodups)")
-   args = parser.parse_args()
-
-   if not os.path.exists(OUTDIR):
-       os.mkdir(OUTDIR)
-
-   # input type selection
-   if args.input_type == 'P':
-       cols = cols_pairs
-       orientation_list = orientation_list_pairs
-   elif args.input_type == 'M':
-       cols = cols_merged_nodups
-       orientation_list = orientation_list_merged_nodups
-   elif args.input_type == 'OM':
-       cols = cols_old_merged_nodups 
-       orientation_list = orientation_list_merged_nodups
-   else:
-       print("Unknown input type"); exit(1)
-
-   # get the stats
-   cis_trans_ratio (args.pairs, cols = cols )
-   distance_histogram (args.pairs, args.chrsize, cols = cols, orientation_list = orientation_list)
-
-
+    import argparse
+ 
+    parser = argparse.ArgumentParser(description = 'QC for Pairs')
+    parser.add_argument('-p','--pairs', help = "input pairs file")
+    parser.add_argument('-c','--chrsize', help = "input chromsize file")
+    parser.add_argument('-t','--input_type', help = "input file type (P:pairs, M:merged_nodups, OM:old_merged_nodups)")
+    parser.add_argument('-O','--output_prefix', help = "prefix of output directory (output directory name will be <output_prefix>_report")
+    args = parser.parse_args()
+ 
+    if args.output_prefix:
+        outdir = args.output_prefix + '_report'
+    else:
+        outdir = 'report'
+    if not os.path.exists(outdir):
+        os.mkdir(outdir)
+ 
+    # input type selection
+    if args.input_type == 'P':
+        cols = cols_pairs
+        orientation_list = orientation_list_pairs
+    elif args.input_type == 'M':
+        cols = cols_merged_nodups
+        orientation_list = orientation_list_merged_nodups
+    elif args.input_type == 'OM':
+        cols = cols_old_merged_nodups 
+        orientation_list = orientation_list_merged_nodups
+    else:
+        print("Unknown input type"); exit(1)
+ 
+    # get the stats
+    cis_trans_ratio (args.pairs, outdir = outdir, cols = cols )
+    distance_histogram (args.pairs, args.chrsize, outdir = outdir, cols = cols, orientation_list = orientation_list)
+ 
+ 
