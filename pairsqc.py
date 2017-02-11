@@ -315,13 +315,13 @@ if __name__ == '__main__':
        os.mkdir(OUTDIR)
 
    # input type selection
-   if args.input_type is 'P':
+   if args.input_type == 'P':
        cols = cols_pairs
        orientation_list = orientation_list_pairs
-   elif args.input_type is 'M':
+   elif args.input_type == 'M':
        cols = cols_merged_nodups
        orientation_list = orientation_list_merged_nodups
-   elif args.input_type is 'OM':
+   elif args.input_type == 'OM':
        cols = cols_old_merged_nodups 
        orientation_list = orientation_list_merged_nodups
    else:
