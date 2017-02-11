@@ -116,3 +116,35 @@ Resource usage summary:
 
 The output (if any) is above this job summary.
 
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@clarinet001-152.orchestra>
+Subject: Job 1316019: <./sample_command.sh> Done
+
+Job <./sample_command.sh> was submitted from host <loge.orchestra> by user <sl325> in cluster <hms_orchestra>.
+Job was executed on host(s) <clarinet001-152.orchestra>, in queue <short>, as user <sl325> in cluster <hms_orchestra>.
+</home/sl325> was used as the home directory.
+</home/sl325/git/pairsqc> was used as the working directory.
+Started at Sat Feb 11 00:15:15 2017
+Results reported at Sat Feb 11 03:25:07 2017
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+./sample_command.sh
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time   :  11367.22 sec.
+    Max Memory :       208 MB
+    Max Swap   :       686 MB
+
+    Max Processes  :         4
+    Max Threads    :         5
+
+The output (if any) is above this job summary.
+
