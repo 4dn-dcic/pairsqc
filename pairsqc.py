@@ -150,6 +150,8 @@ class SeparationStat(object):
         print_str += "\t{:.3E}".format(self.allpossible_sumcount)
         print_str += "\t{:.3E}".format(self.prob)
         print_str += "\t{:.3f}\t".format(self.log10prob)
+        print_str += '\t'.join('{:.3E}'.format(self.count_per_chr[chr]) for chr in self.chr_list )
+        print_str += '\t'
         print_str += '\t'.join('{:.3E}'.format(self.allpossible_count_per_chr[chr]) for chr in self.chr_list )
         print_str += '\t'
         print_str += '\t'.join('{:.3E}'.format(self.prob_per_chr[chr]) for chr in self.chr_list )
@@ -168,6 +170,8 @@ class SeparationStat(object):
             + '\tallpossible_sumcount' \
             + '\tprob' \
             + '\tlog10prob\t' \
+            + '\t'.join('count_per_chr.{}'.format(k) for k in self.chr_list) \
+            + '\t' \
             + '\t'.join('allpossible_count_per_chr.{}'.format(k) for k in self.chr_list) \
             + '\t' \
             + '\t'.join('prob_per_chr.{}'.format(k) for k in self.chr_list) \
