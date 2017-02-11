@@ -33,6 +33,7 @@ git clone https://github.com/4dn-dcic/pairsqc
 1) pairsqc.py
 ```
 usage: pairsqc.py [-h] [-p PAIRS] [-c CHRSIZE] [-t INPUT_TYPE]
+                  [-O OUTPUT_PREFIX]
 
 QC for Pairs
 
@@ -45,6 +46,9 @@ optional arguments:
   -t INPUT_TYPE, --input_type INPUT_TYPE
                         input file type (P:pairs, M:merged_nodups,
                         OM:old_merged_nodups)
+  -O OUTPUT_PREFIX, --output_prefix OUTPUT_PREFIX
+                        prefix of output directory (output directory name will
+                        be <output_prefix>_report
 ```
 2) plot.r
 ```
@@ -52,6 +56,7 @@ Rscript plot.r
 ```
 
 ### Output
+If output prefix is not specified, the output directory will be './report'
 The python script generates two text output files, `report/cis_to_trans.out` and `report/plot_table.out`.
 The R script generates image files in `report/plots`.
 The output report can be found in `report/pairsqc_report.html`.
