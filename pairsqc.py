@@ -43,6 +43,7 @@ class GenomeSize(object):
                 self.total_len += int(size)
         self.nChr = len(self.chrsize)
 
+
 class CisTransStat(object):
     """Summary statistics including cis-trans ratio"""
 
@@ -55,7 +56,7 @@ class CisTransStat(object):
     def calculate_total(self):
         self.total = self.cis + self.cis_short + self.trans
 
-    def print(self, fout):
+    def print_stat(self, fout):
         fout.write("Total reads\t{:,}\n".format(self.total))
         fout.write("Short cis reads (<20kb)\t{:,}\n".format(self.cis_short))
         fout.write("Cis reads (>20kb)\t{:,}\n".format(self.cis))
@@ -238,7 +239,7 @@ def cis_trans_ratio (pairs_file, DIST_THRES=20000, cols= cols_pairs):
     
     # print stats
     with open(CIS_TRANS_OUT_FILE,'w') as f:
-        cts.print(f)
+        cts.print_stat(f)
 
 
 def distance_histogram (pairs_file, chromsize_file, cols=cols_pairs, orientation_list = orientation_list_pairs, max_logdistance=8.4, min_logdistance=1, log_binsize=0.1):
