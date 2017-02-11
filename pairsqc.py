@@ -37,11 +37,11 @@ class GenomeSize(object):
         self.chrsize=dict()
         self.total_len=0
         with open(chromsize_file,'r') as f:
-            chr, size = f.readline().strip().split('\t')
-            self.chrsize[chr] = int(size)
-            self.total_len += int(size)
+            for line in f:
+                chr, size = line.strip().split('\t')
+                self.chrsize[chr] = int(size)
+                self.total_len += int(size)
         self.nChr = len(self.chrsize)
-
 
 class CisTransStat(object):
     """Summary statistics including cis-trans ratio"""
@@ -66,59 +66,98 @@ class CisTransStat(object):
 class SeparationStat(object):
     """Statistics to be calculated for each separation distance bin"""
 
-    def __init__(self, orientation_list, pseudocount=1E-100):
+    def __init__(self, orientation_list, gs, pseudocount=1E-100):
+        """gs: GenomeSize object"""
         self.orientation_list = orientation_list
-        self.count = { a: 0 for a in orientation_list }
-        self.log10count = { a: 0 for a in orientation_list }
-        self.pcount = { a: 0 for a in orientation_list }
+        self.gs = gs
+        self.chr_list = list(gs.chrsize.keys())
+        self.chr_list.sort()
+        self.pseudocount = pseudocount
+
+        # per-orientation
+        self.count_per_ori = { a: 0 for a in orientation_list }
+        self.log10count_per_ori = { a: 0 for a in orientation_list }
+        self.pcount_per_ori = { a: 0 for a in orientation_list }
+
+        # per-chromosome
+        self.count_per_chr = { a: 0 for a in gs.chrsize.keys() }
+        self.allpossible_count_per_chr = { a: 0 for a in gs.chrsize.keys() }
+        self.prob_per_chr = { a: 0 for a in gs.chrsize.keys() }
+        self.log10prob_per_chr = { a: 0 for a in gs.chrsize.keys() }
+
+        # total
         self.sumcount = 0
         self.log10sumcount = 0
         self.prob = 0
         self.log10prob = 0
         self.allpossible_sumcount = 0
-        self.pseudocount = pseudocount
 
-    def increment(self, orientation):
-        self.count[orientation] += 1
-        self.sumcount += 1
+    def increment(self, orientation, chr):
+        """increment both count_per_ori and count_per_chr together, so that we don't count the read on a weird chromosome for orientation and vice versa"""
+        if orientation in self.orientation_list: # skip if not included in orientation list
+            if chr in self.chr_list: # skip if not included in chr list
+                self.count_per_ori[orientation] += 1
+                self.count_per_chr[chr] += 1
 
-    def calculate_log10count(self):
+    def calculate_sumcount(self):
+        self.sumcount = sum(self.count_per_ori.values())
+        assert self.sumcount == sum(self.count_per_chr.values())
+
+    def calculate_log10count_per_ori(self):
         for orientation in self.orientation_list:
-            c = self.count[orientation] + self.pseudocount
-            self.log10count[orientation] = math.log10( c )  
+            c = self.count_per_ori[orientation] + self.pseudocount
+            self.log10count_per_ori[orientation] = math.log10( c )  
 
     def calculate_log10sumcount(self):
         sc = self.sumcount + self.pseudocount * 4
         self.log10sumcount = math.log10( sc )
 
-    def calculate_pcount(self):
+    def calculate_pcount_per_ori(self):
         sc = self.sumcount + self.pseudocount * 4
         for orientation in self.orientation_list:
-            c = self.count[orientation] + self.pseudocount
-            self.pcount[orientation] = c / sc
+            c = self.count_per_ori[orientation] + self.pseudocount
+            self.pcount_per_ori[orientation] = c / sc
 
-    def calculate_contact_probability(self, s, bin_size, gs):
+    def calculate_contact_probability_per_chr(self, s, bin_size):
         """Calculate contact probability for a given separation distance and bin size
         s is the representative log10 separation distance.
-        gs: GenomeSize object
         """
-        self.allpossible_sumcount = gs.total_len - gs.nChr * ( 10**s + 1 )  # same as sum of (chrlen - s - 1).
+        for chr in self.chr_list:
+            self.allpossible_count_per_chr[chr] = self.gs.chrsize[chr] - 10**s - 1
+            if self.allpossible_count_per_chr[chr] <= 0: # the chromosome is smaller than s
+                self.allpossible_count_per_chr[chr] = 0
+                self.prob_per_chr[chr] = 0
+            else:
+                self.prob_per_chr[chr] = self.count_per_chr[chr] / self.allpossible_count_per_chr[chr] / bin_size 
+                self.log10prob_per_chr[chr] = math.log10(self.prob_per_chr[chr] + self.pseudocount)
+
+    def calculate_contact_probability(self, s, bin_size):
+        """Calculate contact probability for a given separation distance and bin size
+        s is the representative log10 separation distance.
+        """
+        self.allpossible_sumcount = sum(self.allpossible_count_per_chr.values()) 
         self.prob = self.sumcount / self.allpossible_sumcount / bin_size 
         self.log10prob = math.log10(self.prob + self.pseudocount)
 
     def print_content(self, fout, bin_mid):
         print_str = "{:.3f}\t".format(bin_mid)
-        print_str += '\t'.join('{}'.format(self.count[ori]) for ori in self.orientation_list )
+        print_str += '\t'.join('{}'.format(self.count_per_ori[ori]) for ori in self.orientation_list )
         print_str += "\t{}\t".format(self.sumcount)
-        print_str += '\t'.join('{:.3f}'.format(self.log10count[ori]) for ori in self.orientation_list )
+        print_str += '\t'.join('{:.3f}'.format(self.log10count_per_ori[ori]) for ori in self.orientation_list )
         print_str += "\t{:.3f}\t".format(self.log10sumcount)
-        print_str += '\t'.join('{:.3f}'.format(self.pcount[ori]) for ori in self.orientation_list )
+        print_str += '\t'.join('{:.3f}'.format(self.pcount_per_ori[ori]) for ori in self.orientation_list )
         print_str += "\t{:.3E}".format(self.allpossible_sumcount)
         print_str += "\t{:.3E}".format(self.prob)
-        print_str += "\t{:.3f}\n".format(self.log10prob)
+        print_str += "\t{:.3f}\t".format(self.log10prob)
+        print_str += '\t'.join('{:.3E}'.format(self.allpossible_count_per_chr[chr]) for chr in self.chr_list )
+        print_str += '\t'
+        print_str += '\t'.join('{:.3E}'.format(self.prob_per_chr[chr]) for chr in self.chr_list )
+        print_str += '\t'
+        print_str += '\t'.join('{:.3f}'.format(self.log10prob_per_chr[chr]) for chr in self.chr_list )
+        print_str += '\n'
         fout.write(print_str)
 
-    def print_header(fout):
+    def print_header(self, fout):
         header_str = "distance\t" \
             + '\t'.join('count.{}'.format(k) for k in orientation_names) \
             + '\tsum\t' \
@@ -127,7 +166,13 @@ class SeparationStat(object):
             + '\t'.join('proportion.{}'.format(k) for k in orientation_names) \
             + '\tallpossible_sumcount' \
             + '\tprob' \
-            + '\tlog10prob\n'
+            + '\tlog10prob\t' \
+            + '\t'.join('allpossible_count_per_chr.{}'.format(k) for k in self.chr_list) \
+            + '\t' \
+            + '\t'.join('prob_per_chr.{}'.format(k) for k in self.chr_list) \
+            + '\t' \
+            + '\t'.join('log10prob_per_chr.{}'.format(k) for k in self.chr_list) \
+            + '\n'
         fout.write(header_str)
 
 
@@ -208,7 +253,7 @@ def distance_histogram (pairs_file, chromsize_file, cols=cols_pairs, orientation
 
     ss = []
     for a in bins.range:
-        ss.append(SeparationStat(orientation_list))
+        ss.append(SeparationStat(orientation_list,gs))
 
     tb=pypairix.open( pairs_file )
     chrplist = tb.get_blocknames()
@@ -227,23 +272,28 @@ def distance_histogram (pairs_file, chromsize_file, cols=cols_pairs, orientation
                 if distance > 0:
                     bin_number = bins.get_bin_number(distance)
                     if bin_number <= bins.max_bin_number:
-                        ss[bin_number].increment(orientation)
+                        ss[bin_number].increment(orientation, chr1)
+
+    # calculate total
+    for bin_number in bins.range:
+        ss[bin_number].calculate_sumcount()
 
     # calculate histogram in log10 counts and proportion
     for bin_number in bins.range:
-        ss[bin_number].calculate_log10count()
+        ss[bin_number].calculate_log10count_per_ori()
         ss[bin_number].calculate_log10sumcount()
-        ss[bin_number].calculate_pcount()
+        ss[bin_number].calculate_pcount_per_ori()
 
     # calculate contact probability
     for bin_number in bins.range:
         bin_mid = bins.get_bin_mid(bin_number)
         bin_size = bins.get_bin_size(bin_mid)
-        ss[bin_number].calculate_contact_probability(bin_mid, bin_size, gs)
+        ss[bin_number].calculate_contact_probability_per_chr(bin_mid, bin_size)
+        ss[bin_number].calculate_contact_probability(bin_mid, bin_size)
 
     # print histogram
     with open(PLOT_TABLE_OUT_FILE,'w') as f:
-        SeparationStat.print_header(f)
+        ss[0].print_header(f)
         for bin_number in bins.range:
             bin_mid = bins.get_bin_mid(bin_number)
             if bin_mid <= bins.max_logdistance and bin_mid >= bins.min_logdistance:
