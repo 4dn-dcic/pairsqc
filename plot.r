@@ -1,3 +1,7 @@
+
+args = commandArgs(TRUE)
+if(length(args)>0) { report_dir = args[1] } else { report_dir = './report' }
+
 library(devtools)
 install_url("https://github.com/SooLee/Soo.plot.base/archive/0.9.0.zip")
 library(Soo.plot.base)
@@ -129,10 +133,14 @@ generate_pairsqc_report <- function ( sample_name = NA) {
 
 ##################
 
-x=read.table("report/plot_table.out",skip=0,sep="\t",stringsAsFactors=F,header=T)
+cwd = getwd()
+plot_table_file = paste(report_dir,"plot_table.out",sep="/")
+plot_dir = paste(report_dir,"plots",sep="/")
 
-dir.create("report/plots", showWarnings = FALSE, recursive = TRUE)
-setwd("report/plots")
+x=read.table(plot_table_file,skip=0,sep="\t",stringsAsFactors=F,header=T)
+
+dir.create(plot_dir, showWarnings = FALSE, recursive = TRUE)
+setwd(plot_dir)
 pngpdf.nodate( function(){
   plot_orientation_proportion_vs_distance(x, plt=c(0.2,0.95,0.45,0.95), no_xlabel=T)
   par(new=T)
@@ -144,7 +152,7 @@ pngpdf.nodate( function()plot_contact_probability_vs_distance(x) ,"log10prob")
 pngpdf.nodate( function()plot_entropy(x), "entropy", height=4)
 #pngpdf.nodate( function()plot_sd_with_cutoff(x),"sd_w_cut", height=4)
 
-setwd("..")
+setwd(cwd)
+setwd(report_dir)
 generate_pairsqc_report()
-setwd("..")
 

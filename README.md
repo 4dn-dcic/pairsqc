@@ -52,7 +52,8 @@ optional arguments:
 ```
 2) plot.r
 ```
-Rscript plot.r
+Rscript plot.r [<report_dir>]
+# If <report_dir> is not specified, it assumed './report' as the report directory. The output directory of pairsqc.py must match <report_dir>, which is '<OUTPUT_PREFIX>_report'.
 ```
 
 ### Output
