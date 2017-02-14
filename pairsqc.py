@@ -55,12 +55,19 @@ class CisTransStat(object):
     def calculate_total(self):
         self.total = self.cis + self.cis_short + self.trans
 
+    def calculate_cis_to_trans(self):
+        self.cis_to_trans = float(self.cis) / float(self.cis+self.trans) * 100
+
+    def calculate_percent_long_range_intra(self):
+        self.p_long_range_intra = float(self.cis) / float(self.total) * 100
+
     def print_stat(self, fout):
         fout.write("Total reads\t{:,}\n".format(self.total))
         fout.write("Short cis reads (<20kb)\t{:,}\n".format(self.cis_short))
         fout.write("Cis reads (>20kb)\t{:,}\n".format(self.cis))
         fout.write("Trans reads\t{:,}\n".format(self.trans))
-        fout.write("Cis/Trans ratio\t{:.3f}\n".format(float(self.cis)/float(self.cis+self.trans)*100))
+        fout.write("Cis/Trans ratio\t{:.3f}\n".format(self.cis_to_trans))
+        fout.write("% Long-range intrachromosomal reads\t{:.3f}\n".format(self.p_long_range_intra))
 
 
 class SeparationStat(object):
@@ -246,6 +253,8 @@ def cis_trans_ratio (pairs_file, outdir='report', DIST_THRES=20000, cols= cols_p
         else:
             cts.trans += sum(1 for x in it)
     cts.calculate_total()
+    cts.calculate_cis_to_trans()
+    cts.calculate_percent_long_range_intra()
     
     # print stats
     with open(outdir + '/' + CIS_TRANS_OUT_FILE_NAME,'w') as f:
