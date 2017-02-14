@@ -1,0 +1,58 @@
+[get_intv] the following line cannot be parsed and skipped: HISEQ:1001:H7GBAADXX:1:1205:20657:62337	0	1	10008	0	0	1	249240483	576356	0	0
+[ti_index_core] the indexes overlap or are out of bounds
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@ottavino002-231.orchestra>
+Subject: Job 1393112: <../pairix/bin/pairix -f -s2 -d6 -b3 -e3 -u7 -T /n/data1/hms/dbmi/park/sl325/4dn/pairs/GM12878_insitu_DpnII_merged_nodups.tab.chrblock_sorted.txt.gz> Exited
+
+Job <../pairix/bin/pairix -f -s2 -d6 -b3 -e3 -u7 -T /n/data1/hms/dbmi/park/sl325/4dn/pairs/GM12878_insitu_DpnII_merged_nodups.tab.chrblock_sorted.txt.gz> was submitted from host <loge.orchestra> by user <sl325> in cluster <hms_orchestra>.
+Job was executed on host(s) <ottavino002-231.orchestra>, in queue <short>, as user <sl325> in cluster <hms_orchestra>.
+</home/sl325> was used as the home directory.
+</home/sl325/git/pairsqc> was used as the working directory.
+Started at Sat Feb 11 23:11:39 2017
+Results reported at Sat Feb 11 23:11:39 2017
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+../pairix/bin/pairix -f -s2 -d6 -b3 -e3 -u7 -T /n/data1/hms/dbmi/park/sl325/4dn/pairs/GM12878_insitu_DpnII_merged_nodups.tab.chrblock_sorted.txt.gz
+------------------------------------------------------------
+
+Exited with exit code 255.
+
+Resource usage summary:
+
+    CPU time   :      0.03 sec.
+
+The output (if any) is above this job summary.
+
+[get_intv] the following line cannot be parsed and skipped: HISEQ:1001:H7GBAADXX:1:1205:20657:62337	0	1	10008	0	0	1	249240483	576356	0	0
+[ti_index_core] the indexes overlap or are out of bounds
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@clarinet001-149.orchestra>
+Subject: Job 1393113: <../pairix/bin/pairix -f -s3 -d7 -b4 -e4 -u8 -T /n/data1/hms/dbmi/park/sl325/4dn/pairs/GM12878_insitu_DpnII_merged_nodups.tab.chrblock_sorted.txt.gz> Exited
+
+Job <../pairix/bin/pairix -f -s3 -d7 -b4 -e4 -u8 -T /n/data1/hms/dbmi/park/sl325/4dn/pairs/GM12878_insitu_DpnII_merged_nodups.tab.chrblock_sorted.txt.gz> was submitted from host <loge.orchestra> by user <sl325> in cluster <hms_orchestra>.
+Job was executed on host(s) <clarinet001-149.orchestra>, in queue <short>, as user <sl325> in cluster <hms_orchestra>.
+</home/sl325> was used as the home directory.
+</home/sl325/git/pairsqc> was used as the working directory.
+Started at Sat Feb 11 23:14:41 2017
+Results reported at Sat Feb 11 23:14:43 2017
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+../pairix/bin/pairix -f -s3 -d7 -b4 -e4 -u8 -T /n/data1/hms/dbmi/park/sl325/4dn/pairs/GM12878_insitu_DpnII_merged_nodups.tab.chrblock_sorted.txt.gz
+------------------------------------------------------------
+
+Exited with exit code 255.
+
+Resource usage summary:
+
+    CPU time   :      1.60 sec.
+
+The output (if any) is above this job summary.
+

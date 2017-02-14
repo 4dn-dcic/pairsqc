@@ -60,7 +60,7 @@ class CisTransStat(object):
         fout.write("Short cis reads (<20kb)\t{:,}\n".format(self.cis_short))
         fout.write("Cis reads (>20kb)\t{:,}\n".format(self.cis))
         fout.write("Trans reads\t{:,}\n".format(self.trans))
-        fout.write("Cis/Trans ratio\t{:.3f}\n".format(self.cis/(self.cis+self.trans)*100))
+        fout.write("Cis/Trans ratio\t{:.3f}\n".format(float(self.cis)/float(self.cis+self.trans)*100))
 
 
 class SeparationStat(object):
@@ -139,8 +139,9 @@ class SeparationStat(object):
         self.prob = self.sumcount / self.allpossible_sumcount / bin_size 
         self.log10prob = math.log10(self.prob + self.pseudocount)
 
-    def print_content(self, fout, bin_mid):
+    def print_content(self, fout, bin_mid, bin_range_string):
         print_str = "{:.3f}\t".format(bin_mid)
+        print_str += "{}\t".format(bin_range_string)
         print_str += '\t'.join('{}'.format(self.count_per_ori[ori]) for ori in self.orientation_list )
         print_str += "\t{}\t".format(self.sumcount)
         print_str += '\t'.join('{:.3f}'.format(self.log10count_per_ori[ori]) for ori in self.orientation_list )
@@ -161,6 +162,7 @@ class SeparationStat(object):
 
     def print_header(self, fout):
         header_str = "distance\t" \
+            + '\tdistance_range(bp)\t' \
             + '\t'.join('count.{}'.format(k) for k in orientation_names) \
             + '\tsum\t' \
             + '\t'.join('log10count.{}'.format(k) for k in orientation_names) \
@@ -201,6 +203,11 @@ class DistanceBin(object):
         log_distance = math.log10(distance) 
         bin_number = int(log_distance / self.log_binsize)
         return(bin_number) 
+
+    def get_bin_range_string(self, bin_mid):
+        minval = int(round(10**(bin_mid - self.log_binsize/2)))
+        maxval = int(round(10**(bin_mid + self.log_binsize/2)))
+        return("{:,}~{:,}".format(minval, maxval))
 
 
 def get_distance_and_orientation (line, cols):
@@ -301,7 +308,7 @@ def distance_histogram (pairs_file, chromsize_file, outdir='report', cols=cols_p
         for bin_number in bins.range:
             bin_mid = bins.get_bin_mid(bin_number)
             if bin_mid <= bins.max_logdistance and bin_mid >= bins.min_logdistance:
-                ss[bin_number].print_content(f, bin_mid)
+                ss[bin_number].print_content(f, bin_mid, bins.get_bin_range_string(bin_mid))
 
 
 if __name__ == '__main__':

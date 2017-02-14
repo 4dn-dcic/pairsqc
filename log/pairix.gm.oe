@@ -1,0 +1,28 @@
+/home/sl325/.lsbatch/1486873286.1393150: line 8: ./prep_gm.sh: Permission denied
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@clarinet001-204.orchestra>
+Subject: Job 1393150: <./prep_gm.sh> Exited
+
+Job <./prep_gm.sh> was submitted from host <loge.orchestra> by user <sl325> in cluster <hms_orchestra>.
+Job was executed on host(s) <clarinet001-204.orchestra>, in queue <short>, as user <sl325> in cluster <hms_orchestra>.
+</home/sl325> was used as the home directory.
+</home/sl325/git/pairsqc> was used as the working directory.
+Started at Sat Feb 11 23:21:30 2017
+Results reported at Sat Feb 11 23:21:30 2017
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+./prep_gm.sh
+------------------------------------------------------------
+
+Exited with exit code 126.
+
+Resource usage summary:
+
+    CPU time   :      0.04 sec.
+
+The output (if any) is above this job summary.
+
