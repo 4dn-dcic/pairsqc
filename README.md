@@ -16,8 +16,13 @@ Pairsqc is a tool for generating a QC report for a Hi-C pairs file.
   R CMD Install devtools
   ```
   * Nozzle
+  ```r
+  # open an R session and type in the following.
+  install.packages( "Nozzle.R1", type="source" );
   ```
-  #Install Nozzle as follows, outside the pairsqc directory (avoid git clone inside another git repo)
+  If the above didn't work, try the following.
+  ```
+  # Install as follows, outside the pairsqc directory (avoid git clone inside another git repo)
   git clone https://github.com/parklab/nozzle
   cd nozzle
   ./install.sh
