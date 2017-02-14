@@ -82,6 +82,9 @@ zip report.zip report # if you want to create a zip file for the report.
 * Cis-to-trans ratio is computed as number_of_cis_reads / (number_of_cis_reads + number_of_trans_reads) * 100, where a cis read is defined as an intrachromosomal read whose 5'-5' separation is > T. A trans read is an interchromosomal read. T=20kb.
 * Cis-to-trans ratio at T=5kb and T=20kb show only minor difference (less than 10%).
 
+#### Percent long-range intrachromosome reads
+* This is number_of_long_cis_reads / total_reads, whereas a long_cis_read is defined as an intrachromosomal read whose 5'-5' separation is > T. T=20kb. This is identical to the 'cis_read' in the cis-to-trans ratio, since cis-to-trans ratio is computed using only long-range cis reads. Rao et al. suggests 15% is the minimal allowed value and 40% or higher suggests a good library.
+
 #### Proportion of read orientations versus genomic separation
 * s = 5'-5' separation of an intrachromosomal read.
 * s is binned at log10 scale at interval of 0.1 (growing by ~1.25-fold).
