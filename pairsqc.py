@@ -99,7 +99,7 @@ class SeparationStat(object):
         self.log10prob = 0
         self.allpossible_sumcount = 0
 
-    def increment(self, orientation, chr):
+    def increment(self, orientation, chrom):
         """increment both count_per_ori and count_per_chr together, so that we don't count the read on a weird chromosome for orientation and vice versa"""
         if orientation in self.orientation_list: # skip if not included in orientation list
             if chrom in self.chr_list: # skip if not included in chr list
