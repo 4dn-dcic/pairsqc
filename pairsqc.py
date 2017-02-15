@@ -135,7 +135,7 @@ class SeparationStat(object):
                 self.allpossible_count_per_chr[chrom] = 0
                 self.prob_per_chr[chrom] = 0
             else:
-                self.prob_per_chr[chrom] = self.count_per_chr[chrom] / self.allpossible_count_per_chr[chrom] / bin_size 
+                self.prob_per_chr[chrom] = self.count_per_chr[chrom] / self.allpossible_count_per_chr[chrom] / bin_size
                 self.log10prob_per_chr[chrom] = math.log10(self.prob_per_chr[chrom] + self.pseudocount)
 
     def calculate_contact_probability(self, s, bin_size):
