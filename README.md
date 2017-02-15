@@ -1,8 +1,8 @@
 ## Pairsqc
+* Pairsqc is a tool for generating a QC report for a Hi-C pairs file.
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d7fb14bb0c64435797a621fa677934a7)](https://www.codacy.com/app/SooLee/pairsqc?utm_source=github.com&utm_medium=referral&utm_content=SooLee/pairsqc&utm_campaign=badger)
 
-Pairsqc is a tool for generating a QC report for a Hi-C pairs file.
 
 
 ### Dependency
