@@ -57,7 +57,8 @@ optional arguments:
 ```
 2) plot.r
 ```
-Rscript plot.r [<report_dir>]
+Rscript plot.r <enzyme_type> [<report_dir>]
+# <enzyme_type> is either 4 (four-cutter, MboI, DpnII) or 6 (six-cutter, HindIII, NcoI). This value is used to draw a line for expected convergence point for read orientations.
 # If <report_dir> is not specified, it assumed './report' as the report directory. The output directory of pairsqc.py must match <report_dir>, which is '<OUTPUT_PREFIX>_report'.
 ```
 
@@ -72,7 +73,7 @@ The output report can be found in `report/pairsqc_report.html`.
 ### Example run
 ```
 python pairsqc.py -p test_samples/merged_nodup.tab.chrblock_sorted.txt.gz -c test_samples/hg19.chrom.size -t M
-Rscript plot.r
+Rscript plot.r 4
 zip report.zip report # if you want to create a zip file for the report.
 ```
 
@@ -107,6 +108,11 @@ zip report.zip report # if you want to create a zip file for the report.
 * Slope of the region 10^4 ~ 10^5.5 is displayed.
 
 ![](report/plots/log10prob.png)
+
+#### Contact propability versus genomic separation, per chromosome
+* Same as Contact propability versus genomic separation, but for each chromosome
+
+![](report/plots/log10prob_chr.png)
 
 #### Speed
 2.7sec/M reads on Macbook Air with 2.2 GHz Intel Core i7.
