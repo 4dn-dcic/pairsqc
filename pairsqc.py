@@ -270,7 +270,7 @@ def distance_histogram (pairs_file, chromsize_file, outdir='report', cols=cols_p
     bins = DistanceBin(min_logdistance, max_logdistance, log_binsize)
 
     ss = []
-    for a in bins.range:
+    for _ in bins.range:
         ss.append(SeparationStat(orientation_list,gs))
 
     tb=pypairix.open( pairs_file )
