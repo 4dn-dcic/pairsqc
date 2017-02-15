@@ -1,8 +1,7 @@
-language: python R
-sudo: false
+language: python r
+sudo: required
 cache:
   pip: true
-  packages
 python:
 - '3.5'
 - '2.7'
@@ -13,7 +12,7 @@ r:
 install:
 - pip install pypairix
 - pip install tox
-- pip install coveralls
+- pip install coveralls 
 - pip install codacy-coverage
 r_github_packages: parklab/nozzle
 script:

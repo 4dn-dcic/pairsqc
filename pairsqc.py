@@ -99,7 +99,7 @@ class SeparationStat(object):
         self.log10prob = 0
         self.allpossible_sumcount = 0
 
-    def increment(self, orientation, chr):
+    def increment(self, orientation, chrom):
         """increment both count_per_ori and count_per_chr together, so that we don't count the read on a weird chromosome for orientation and vice versa"""
         if orientation in self.orientation_list: # skip if not included in orientation list
             if chrom in self.chr_list: # skip if not included in chr list
@@ -270,7 +270,7 @@ def distance_histogram (pairs_file, chromsize_file, outdir='report', cols=cols_p
     bins = DistanceBin(min_logdistance, max_logdistance, log_binsize)
 
     ss = []
-    for a in bins.range:
+    for _ in bins.range:
         ss.append(SeparationStat(orientation_list,gs))
 
     tb=pypairix.open( pairs_file )
