@@ -112,5 +112,6 @@ zip report.zip report # if you want to create a zip file for the report.
 ![](report/plots/log10prob_chr.png)
 
 #### Speed
-2.7sec/M reads on Macbook Air with 2.2 GHz Intel Core i7.
-(~2700 seconds for 1B reads)
+12 sec/M reads on Macbook Air with 2.2 GHz Intel Core i7.
+(~3.5 hrs for 1B reads)
+
