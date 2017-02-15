@@ -1,8 +1,7 @@
 language: python R
 sudo: false
-cache:
+cache: packages
   pip: true
-  packages
 python:
 - '3.5'
 - '2.7'
