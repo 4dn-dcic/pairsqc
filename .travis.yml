@@ -1,6 +1,6 @@
-language: python R
+language: python r
 sudo: false
-cache: packages
+cache:
   pip: true
 python:
 - '3.5'
