@@ -37,8 +37,8 @@ class GenomeSize(object):
         self.total_len=0
         with open(chromsize_file,'r') as f:
             for line in f:
-                chr, size = line.strip().split('\t')
-                self.chrsize[chr] = int(size)
+                chrom, size = line.strip().split('\t')
+                self.chrsize[chrom] = int(size)
                 self.total_len += int(size)
         self.nChr = len(self.chrsize)
 
@@ -102,9 +102,9 @@ class SeparationStat(object):
     def increment(self, orientation, chr):
         """increment both count_per_ori and count_per_chr together, so that we don't count the read on a weird chromosome for orientation and vice versa"""
         if orientation in self.orientation_list: # skip if not included in orientation list
-            if chr in self.chr_list: # skip if not included in chr list
+            if chrom in self.chr_list: # skip if not included in chr list
                 self.count_per_ori[orientation] += 1
-                self.count_per_chr[chr] += 1
+                self.count_per_chr[chrom] += 1
 
     def calculate_sumcount(self):
         self.sumcount = sum(self.count_per_ori.values())
@@ -129,21 +129,21 @@ class SeparationStat(object):
         """Calculate contact probability for a given separation distance and bin size
         s is the representative log10 separation distance.
         """
-        for chr in self.chr_list:
-            self.allpossible_count_per_chr[chr] = self.gs.chrsize[chr] - 10**s - 1
-            if self.allpossible_count_per_chr[chr] <= 0: # the chromosome is smaller than s
-                self.allpossible_count_per_chr[chr] = 0
-                self.prob_per_chr[chr] = 0
+        for chrom in self.chr_list:
+            self.allpossible_count_per_chr[chrom] = self.gs.chrsize[chrom] - 10**s - 1
+            if self.allpossible_count_per_chr[chrom] <= 0: # the chromosome is smaller than s
+                self.allpossible_count_per_chr[chrom] = 0
+                self.prob_per_chr[chrom] = 0
             else:
-                self.prob_per_chr[chr] = self.count_per_chr[chr] / self.allpossible_count_per_chr[chr] / bin_size 
-                self.log10prob_per_chr[chr] = math.log10(self.prob_per_chr[chr] + self.pseudocount)
+                self.prob_per_chr[chrom] = self.count_per_chr[chrom] / self.allpossible_count_per_chr[chrom] / bin_size
+                self.log10prob_per_chr[chrom] = math.log10(self.prob_per_chr[chrom] + self.pseudocount)
 
     def calculate_contact_probability(self, s, bin_size):
         """Calculate contact probability for a given separation distance and bin size
         s is the representative log10 separation distance.
         """
-        self.allpossible_sumcount = sum(self.allpossible_count_per_chr.values()) 
-        self.prob = self.sumcount / self.allpossible_sumcount / bin_size 
+        self.allpossible_sumcount = sum(self.allpossible_count_per_chr.values())
+        self.prob = self.sumcount / self.allpossible_sumcount / bin_size
         self.log10prob = math.log10(self.prob + self.pseudocount)
 
     def print_content(self, fout, bin_mid, bin_range_string):
@@ -207,9 +207,9 @@ class DistanceBin(object):
         return(bin_number * self.log_binsize + self.log_binsize/2)
 
     def get_bin_number(self, distance):
-        log_distance = math.log10(distance) 
+        log_distance = math.log10(distance)
         bin_number = int(log_distance / self.log_binsize)
-        return(bin_number) 
+        return(bin_number)
 
     def get_bin_range_string(self, bin_mid):
         minval = int(round(10**(bin_mid - self.log_binsize/2)))
@@ -218,11 +218,9 @@ class DistanceBin(object):
 
 
 def get_distance_and_orientation (line, cols):
-    """return distance and orientation 
-    given a list representing a line from the pairs input file and a ColIndices object
-    """
+    """return distance and orientation, given a list representing a line from the pairs input file and a ColIndices object """
     distance = int(line[cols.pos2]) - int(line[cols.pos1])
-    
+
     # distance will always be > 0 for upper triangle, but in case it is not true.
     if distance > 0:
         orientation = str(line[cols.strand1]) + str(line[cols.strand2])
@@ -265,7 +263,7 @@ def distance_histogram (pairs_file, chromsize_file, outdir='report', cols=cols_p
     """create a log10-scale binned histogram table for read separation distance histogram
     The histogram is stratefied by read orientation (4 different orientations)
     The table includes raw counts, log10 counts (pseudocounts added), contact probability, log10 contact probability, and proportions for orientation (pseudocounts added)
-    Bin is represented by the mid value at the log10 scale. 
+    Bin is represented by the mid value at the log10 scale.
     log_binsize: distance bin size in log10 scale.
     """
     gs = GenomeSize(chromsize_file)
@@ -346,7 +344,7 @@ if __name__ == '__main__':
         cols = cols_merged_nodups
         orientation_list = orientation_list_merged_nodups
     elif args.input_type == 'OM':
-        cols = cols_old_merged_nodups 
+        cols = cols_old_merged_nodups
         orientation_list = orientation_list_merged_nodups
     else:
         print("Unknown input type"); exit(1)
