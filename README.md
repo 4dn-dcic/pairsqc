@@ -91,12 +91,9 @@ zip report.zip report # if you want to create a zip file for the report.
 * s is binned at log10 scale at interval of 0.1 (growing by ~1.25-fold).
 * For each bin, the number of reads with each of the four orientations is obtained. To compute proportion, each count is supplemented with a pseudocount of 1E-100, and divided by the sum over the four orientations for that bin.
 * The first bin where the four orientations converge is called resolution, and is determined by using standard deviation of the proportions < 0.02.
+* The contact frequency vs genomic separation plot is similar to Proportion of read orientation versus genomic separation, except the actual read counts are displayed instead of proportions.
 
 ![](report/plots/proportion.png)
-
-#### Number of reads versus genomic separation, stratified by orientation
-* Similar to Proportion of read orientation versus genomic separation, except the actual read counts are displayed instead of proportions.
-![](report/plots/log10counts.png)
 
 
 #### Contact propability versus genomic separation
