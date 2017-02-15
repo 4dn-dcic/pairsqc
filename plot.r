@@ -12,7 +12,7 @@ rainbow_w_offset <- function(L, offset = NA){
 }
 
 library(devtools)
-#install_url("https://github.com/SooLee/Soo.plot.base/archive/0.9.0.zip")
+install_url("https://github.com/SooLee/Soo.plot.base/archive/0.9.0.zip")
 library(Soo.plot.base)
 
 exp_axis<-function(x, axis_ind, n=5){
