@@ -1,0 +1,125 @@
+[get_intv] the following line cannot be parsed and skipped: HISEQ:1001:H7GBAADXX:1:1205:20657:62337	0	1	10008	0	0	1	249240483	576356	0	0
+[ti_index_core] the indexes overlap or are out of bounds
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@ottavino002-231.orchestra>
+Subject: Job 1393112: <../pairix/bin/pairix -f -s2 -d6 -b3 -e3 -u7 -T /n/data1/hms/dbmi/park/sl325/4dn/pairs/GM12878_insitu_DpnII_merged_nodups.tab.chrblock_sorted.txt.gz> Exited
+
+Job <../pairix/bin/pairix -f -s2 -d6 -b3 -e3 -u7 -T /n/data1/hms/dbmi/park/sl325/4dn/pairs/GM12878_insitu_DpnII_merged_nodups.tab.chrblock_sorted.txt.gz> was submitted from host <loge.orchestra> by user <sl325> in cluster <hms_orchestra>.
+Job was executed on host(s) <ottavino002-231.orchestra>, in queue <short>, as user <sl325> in cluster <hms_orchestra>.
+</home/sl325> was used as the home directory.
+</home/sl325/git/pairsqc> was used as the working directory.
+Started at Sat Feb 11 23:11:39 2017
+Results reported at Sat Feb 11 23:11:39 2017
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+../pairix/bin/pairix -f -s2 -d6 -b3 -e3 -u7 -T /n/data1/hms/dbmi/park/sl325/4dn/pairs/GM12878_insitu_DpnII_merged_nodups.tab.chrblock_sorted.txt.gz
+------------------------------------------------------------
+
+Exited with exit code 255.
+
+Resource usage summary:
+
+    CPU time   :      0.03 sec.
+
+The output (if any) is above this job summary.
+
+[get_intv] the following line cannot be parsed and skipped: HISEQ:1001:H7GBAADXX:1:1205:20657:62337	0	1	10008	0	0	1	249240483	576356	0	0
+[ti_index_core] the indexes overlap or are out of bounds
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@clarinet001-149.orchestra>
+Subject: Job 1393113: <../pairix/bin/pairix -f -s3 -d7 -b4 -e4 -u8 -T /n/data1/hms/dbmi/park/sl325/4dn/pairs/GM12878_insitu_DpnII_merged_nodups.tab.chrblock_sorted.txt.gz> Exited
+
+Job <../pairix/bin/pairix -f -s3 -d7 -b4 -e4 -u8 -T /n/data1/hms/dbmi/park/sl325/4dn/pairs/GM12878_insitu_DpnII_merged_nodups.tab.chrblock_sorted.txt.gz> was submitted from host <loge.orchestra> by user <sl325> in cluster <hms_orchestra>.
+Job was executed on host(s) <clarinet001-149.orchestra>, in queue <short>, as user <sl325> in cluster <hms_orchestra>.
+</home/sl325> was used as the home directory.
+</home/sl325/git/pairsqc> was used as the working directory.
+Started at Sat Feb 11 23:14:41 2017
+Results reported at Sat Feb 11 23:14:43 2017
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+../pairix/bin/pairix -f -s3 -d7 -b4 -e4 -u8 -T /n/data1/hms/dbmi/park/sl325/4dn/pairs/GM12878_insitu_DpnII_merged_nodups.tab.chrblock_sorted.txt.gz
+------------------------------------------------------------
+
+Exited with exit code 255.
+
+Resource usage summary:
+
+    CPU time   :      1.60 sec.
+
+The output (if any) is above this job summary.
+
+User defined signal 2
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@clarinet001-161.orchestra>
+Subject: Job 1526161: <./prep_gm.sh> Exited
+
+Job <./prep_gm.sh> was submitted from host <gallery.orchestra> by user <sl325> in cluster <hms_orchestra>.
+Job was executed on host(s) <clarinet001-161.orchestra>, in queue <short>, as user <sl325> in cluster <hms_orchestra>.
+</home/sl325> was used as the home directory.
+</home/sl325/git/pairsqc> was used as the working directory.
+Started at Mon Feb 13 16:30:43 2017
+Results reported at Tue Feb 14 04:30:49 2017
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+./prep_gm.sh
+------------------------------------------------------------
+
+TERM_RUNLIMIT: job killed after reaching LSF run time limit.
+Exited with exit code 140.
+
+Resource usage summary:
+
+    CPU time   :  42983.00 sec.
+    Max Memory :      6049 MB
+    Max Swap   :      6379 MB
+
+    Max Processes  :         4
+    Max Threads    :         5
+
+The output (if any) is above this job summary.
+
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@ottavino000-187.orchestra>
+Subject: Job 1625914: <./prep_gm.sh> Exited
+
+Job <./prep_gm.sh> was submitted from host <pit.orchestra> by user <sl325> in cluster <hms_orchestra>.
+Job was executed on host(s) <ottavino000-187.orchestra>, in queue <long>, as user <sl325> in cluster <hms_orchestra>.
+</home/sl325> was used as the home directory.
+</home/sl325/git/pairsqc> was used as the working directory.
+Started at Tue Feb 14 18:33:34 2017
+Results reported at Tue Feb 14 18:43:19 2017
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+./prep_gm.sh
+------------------------------------------------------------
+
+TERM_MEMLIMIT: job killed after reaching LSF memory usage limit.
+Exited with exit code 130.
+
+Resource usage summary:
+
+    CPU time   :    358.13 sec.
+    Max Memory :      9108 MB
+    Max Swap   :     16472 MB
+
+    Max Processes  :         4
+    Max Threads    :         5
+
+The output (if any) is above this job summary.
+

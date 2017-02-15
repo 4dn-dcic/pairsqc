@@ -3,9 +3,8 @@ import math
 import os
 
 SEPARATOR = '|'
-OUTDIR = 'report'
-CIS_TRANS_OUT_FILE = OUTDIR + '/cis_to_trans.out'
-PLOT_TABLE_OUT_FILE = OUTDIR + '/plot_table.out'
+CIS_TRANS_OUT_FILE_NAME =  '/cis_to_trans.out'
+PLOT_TABLE_OUT_FILE_NAME = '/plot_table.out'
 
 
 class ColIndices(object):
@@ -37,9 +36,10 @@ class GenomeSize(object):
         self.chrsize=dict()
         self.total_len=0
         with open(chromsize_file,'r') as f:
-            chr, size = f.readline().strip().split('\t')
-            self.chrsize[chr] = int(size)
-            self.total_len += int(size)
+            for line in f:
+                chr, size = line.strip().split('\t')
+                self.chrsize[chr] = int(size)
+                self.total_len += int(size)
         self.nChr = len(self.chrsize)
 
 
@@ -55,71 +55,121 @@ class CisTransStat(object):
     def calculate_total(self):
         self.total = self.cis + self.cis_short + self.trans
 
-    def print(self, fout):
+    def calculate_cis_to_trans(self):
+        self.cis_to_trans = float(self.cis) / float(self.cis+self.trans) * 100
+
+    def calculate_percent_long_range_intra(self):
+        self.p_long_range_intra = float(self.cis) / float(self.total) * 100
+
+    def print_stat(self, fout):
         fout.write("Total reads\t{:,}\n".format(self.total))
         fout.write("Short cis reads (<20kb)\t{:,}\n".format(self.cis_short))
         fout.write("Cis reads (>20kb)\t{:,}\n".format(self.cis))
         fout.write("Trans reads\t{:,}\n".format(self.trans))
-        fout.write("Cis/Trans ratio\t{:.3f}\n".format(self.cis/(self.cis+self.trans)*100))
+        fout.write("Cis/Trans ratio\t{:.3f}\n".format(self.cis_to_trans))
+        fout.write("% Long-range intrachromosomal reads\t{:.3f}\n".format(self.p_long_range_intra))
 
 
 class SeparationStat(object):
     """Statistics to be calculated for each separation distance bin"""
 
-    def __init__(self, orientation_list, pseudocount=1E-100):
+    def __init__(self, orientation_list, gs, pseudocount=1E-100):
+        """gs: GenomeSize object"""
         self.orientation_list = orientation_list
-        self.count = { a: 0 for a in orientation_list }
-        self.log10count = { a: 0 for a in orientation_list }
-        self.pcount = { a: 0 for a in orientation_list }
+        self.gs = gs
+        self.chr_list = list(gs.chrsize.keys())
+        self.chr_list.sort()
+        self.pseudocount = pseudocount
+
+        # per-orientation
+        self.count_per_ori = { a: 0 for a in orientation_list }
+        self.log10count_per_ori = { a: 0 for a in orientation_list }
+        self.pcount_per_ori = { a: 0 for a in orientation_list }
+
+        # per-chromosome
+        self.count_per_chr = { a: 0 for a in gs.chrsize.keys() }
+        self.allpossible_count_per_chr = { a: 0 for a in gs.chrsize.keys() }
+        self.prob_per_chr = { a: 0 for a in gs.chrsize.keys() }
+        self.log10prob_per_chr = { a: 0 for a in gs.chrsize.keys() }
+
+        # total
         self.sumcount = 0
         self.log10sumcount = 0
         self.prob = 0
         self.log10prob = 0
         self.allpossible_sumcount = 0
-        self.pseudocount = pseudocount
 
-    def increment(self, orientation):
-        self.count[orientation] += 1
-        self.sumcount += 1
+    def increment(self, orientation, chr):
+        """increment both count_per_ori and count_per_chr together, so that we don't count the read on a weird chromosome for orientation and vice versa"""
+        if orientation in self.orientation_list: # skip if not included in orientation list
+            if chr in self.chr_list: # skip if not included in chr list
+                self.count_per_ori[orientation] += 1
+                self.count_per_chr[chr] += 1
 
-    def calculate_log10count(self):
+    def calculate_sumcount(self):
+        self.sumcount = sum(self.count_per_ori.values())
+        assert self.sumcount == sum(self.count_per_chr.values())
+
+    def calculate_log10count_per_ori(self):
         for orientation in self.orientation_list:
-            c = self.count[orientation] + self.pseudocount
-            self.log10count[orientation] = math.log10( c )  
+            c = self.count_per_ori[orientation] + self.pseudocount
+            self.log10count_per_ori[orientation] = math.log10( c )  
 
     def calculate_log10sumcount(self):
         sc = self.sumcount + self.pseudocount * 4
         self.log10sumcount = math.log10( sc )
 
-    def calculate_pcount(self):
+    def calculate_pcount_per_ori(self):
         sc = self.sumcount + self.pseudocount * 4
         for orientation in self.orientation_list:
-            c = self.count[orientation] + self.pseudocount
-            self.pcount[orientation] = c / sc
+            c = self.count_per_ori[orientation] + self.pseudocount
+            self.pcount_per_ori[orientation] = c / sc
 
-    def calculate_contact_probability(self, s, bin_size, gs):
+    def calculate_contact_probability_per_chr(self, s, bin_size):
         """Calculate contact probability for a given separation distance and bin size
         s is the representative log10 separation distance.
-        gs: GenomeSize object
         """
-        self.allpossible_sumcount = gs.total_len - gs.nChr * ( 10**s + 1 )  # same as sum of (chrlen - s - 1).
+        for chr in self.chr_list:
+            self.allpossible_count_per_chr[chr] = self.gs.chrsize[chr] - 10**s - 1
+            if self.allpossible_count_per_chr[chr] <= 0: # the chromosome is smaller than s
+                self.allpossible_count_per_chr[chr] = 0
+                self.prob_per_chr[chr] = 0
+            else:
+                self.prob_per_chr[chr] = self.count_per_chr[chr] / self.allpossible_count_per_chr[chr] / bin_size 
+                self.log10prob_per_chr[chr] = math.log10(self.prob_per_chr[chr] + self.pseudocount)
+
+    def calculate_contact_probability(self, s, bin_size):
+        """Calculate contact probability for a given separation distance and bin size
+        s is the representative log10 separation distance.
+        """
+        self.allpossible_sumcount = sum(self.allpossible_count_per_chr.values()) 
         self.prob = self.sumcount / self.allpossible_sumcount / bin_size 
         self.log10prob = math.log10(self.prob + self.pseudocount)
 
-    def print_content(self, fout, bin_mid):
+    def print_content(self, fout, bin_mid, bin_range_string):
         print_str = "{:.3f}\t".format(bin_mid)
-        print_str += '\t'.join('{}'.format(self.count[ori]) for ori in self.orientation_list )
+        print_str += "{}\t".format(bin_range_string)
+        print_str += '\t'.join('{}'.format(self.count_per_ori[ori]) for ori in self.orientation_list )
         print_str += "\t{}\t".format(self.sumcount)
-        print_str += '\t'.join('{:.3f}'.format(self.log10count[ori]) for ori in self.orientation_list )
+        print_str += '\t'.join('{:.3f}'.format(self.log10count_per_ori[ori]) for ori in self.orientation_list )
         print_str += "\t{:.3f}\t".format(self.log10sumcount)
-        print_str += '\t'.join('{:.3f}'.format(self.pcount[ori]) for ori in self.orientation_list )
+        print_str += '\t'.join('{:.3f}'.format(self.pcount_per_ori[ori]) for ori in self.orientation_list )
         print_str += "\t{:.3E}".format(self.allpossible_sumcount)
         print_str += "\t{:.3E}".format(self.prob)
-        print_str += "\t{:.3f}\n".format(self.log10prob)
+        print_str += "\t{:.3f}\t".format(self.log10prob)
+        print_str += '\t'.join('{:.3E}'.format(self.count_per_chr[chr]) for chr in self.chr_list )
+        print_str += '\t'
+        print_str += '\t'.join('{:.3E}'.format(self.allpossible_count_per_chr[chr]) for chr in self.chr_list )
+        print_str += '\t'
+        print_str += '\t'.join('{:.3E}'.format(self.prob_per_chr[chr]) for chr in self.chr_list )
+        print_str += '\t'
+        print_str += '\t'.join('{:.3f}'.format(self.log10prob_per_chr[chr]) for chr in self.chr_list )
+        print_str += '\n'
         fout.write(print_str)
 
-    def print_header(fout):
+    def print_header(self, fout):
         header_str = "distance\t" \
+            + 'distance_range(bp)\t' \
             + '\t'.join('count.{}'.format(k) for k in orientation_names) \
             + '\tsum\t' \
             + '\t'.join('log10count.{}'.format(k) for k in orientation_names) \
@@ -127,7 +177,15 @@ class SeparationStat(object):
             + '\t'.join('proportion.{}'.format(k) for k in orientation_names) \
             + '\tallpossible_sumcount' \
             + '\tprob' \
-            + '\tlog10prob\n'
+            + '\tlog10prob\t' \
+            + '\t'.join('count_per_chr.{}'.format(k) for k in self.chr_list) \
+            + '\t' \
+            + '\t'.join('allpossible_count_per_chr.{}'.format(k) for k in self.chr_list) \
+            + '\t' \
+            + '\t'.join('prob_per_chr.{}'.format(k) for k in self.chr_list) \
+            + '\t' \
+            + '\t'.join('log10prob_per_chr.{}'.format(k) for k in self.chr_list) \
+            + '\n'
         fout.write(header_str)
 
 
@@ -153,6 +211,11 @@ class DistanceBin(object):
         bin_number = int(log_distance / self.log_binsize)
         return(bin_number) 
 
+    def get_bin_range_string(self, bin_mid):
+        minval = int(round(10**(bin_mid - self.log_binsize/2)))
+        maxval = int(round(10**(bin_mid + self.log_binsize/2)))
+        return("{:,}~{:,}".format(minval, maxval))
+
 
 def get_distance_and_orientation (line, cols):
     """return distance and orientation 
@@ -170,7 +233,7 @@ def get_distance_and_orientation (line, cols):
     return(distance, orientation)
 
 
-def cis_trans_ratio (pairs_file, DIST_THRES=20000, cols= cols_pairs):
+def cis_trans_ratio (pairs_file, outdir='report', DIST_THRES=20000, cols= cols_pairs):
     """measure cis/trans ratio for a given pairs file"""
 
     cts = CisTransStat()
@@ -190,13 +253,15 @@ def cis_trans_ratio (pairs_file, DIST_THRES=20000, cols= cols_pairs):
         else:
             cts.trans += sum(1 for x in it)
     cts.calculate_total()
+    cts.calculate_cis_to_trans()
+    cts.calculate_percent_long_range_intra()
     
     # print stats
-    with open(CIS_TRANS_OUT_FILE,'w') as f:
-        cts.print(f)
+    with open(outdir + '/' + CIS_TRANS_OUT_FILE_NAME,'w') as f:
+        cts.print_stat(f)
 
 
-def distance_histogram (pairs_file, chromsize_file, cols=cols_pairs, orientation_list = orientation_list_pairs, max_logdistance=8.4, min_logdistance=1, log_binsize=0.1):
+def distance_histogram (pairs_file, chromsize_file, outdir='report', cols=cols_pairs, orientation_list = orientation_list_pairs, max_logdistance=8.4, min_logdistance=1, log_binsize=0.1):
     """create a log10-scale binned histogram table for read separation distance histogram
     The histogram is stratefied by read orientation (4 different orientations)
     The table includes raw counts, log10 counts (pseudocounts added), contact probability, log10 contact probability, and proportions for orientation (pseudocounts added)
@@ -208,7 +273,7 @@ def distance_histogram (pairs_file, chromsize_file, cols=cols_pairs, orientation
 
     ss = []
     for a in bins.range:
-        ss.append(SeparationStat(orientation_list))
+        ss.append(SeparationStat(orientation_list,gs))
 
     tb=pypairix.open( pairs_file )
     chrplist = tb.get_blocknames()
@@ -227,57 +292,67 @@ def distance_histogram (pairs_file, chromsize_file, cols=cols_pairs, orientation
                 if distance > 0:
                     bin_number = bins.get_bin_number(distance)
                     if bin_number <= bins.max_bin_number:
-                        ss[bin_number].increment(orientation)
+                        ss[bin_number].increment(orientation, chr1)
+
+    # calculate total
+    for bin_number in bins.range:
+        ss[bin_number].calculate_sumcount()
 
     # calculate histogram in log10 counts and proportion
     for bin_number in bins.range:
-        ss[bin_number].calculate_log10count()
+        ss[bin_number].calculate_log10count_per_ori()
         ss[bin_number].calculate_log10sumcount()
-        ss[bin_number].calculate_pcount()
+        ss[bin_number].calculate_pcount_per_ori()
 
     # calculate contact probability
     for bin_number in bins.range:
         bin_mid = bins.get_bin_mid(bin_number)
         bin_size = bins.get_bin_size(bin_mid)
-        ss[bin_number].calculate_contact_probability(bin_mid, bin_size, gs)
+        ss[bin_number].calculate_contact_probability_per_chr(bin_mid, bin_size)
+        ss[bin_number].calculate_contact_probability(bin_mid, bin_size)
 
     # print histogram
-    with open(PLOT_TABLE_OUT_FILE,'w') as f:
-        SeparationStat.print_header(f)
+    with open(outdir + '/' + PLOT_TABLE_OUT_FILE_NAME,'w') as f:
+        ss[0].print_header(f)
         for bin_number in bins.range:
             bin_mid = bins.get_bin_mid(bin_number)
             if bin_mid <= bins.max_logdistance and bin_mid >= bins.min_logdistance:
-                ss[bin_number].print_content(f, bin_mid)
+                ss[bin_number].print_content(f, bin_mid, bins.get_bin_range_string(bin_mid))
 
 
 if __name__ == '__main__':
 
-   import argparse
-
-   parser = argparse.ArgumentParser(description = 'QC for Pairs')
-   parser.add_argument('-p','--pairs', help = "input pairs file")
-   parser.add_argument('-c','--chrsize', help = "input chromsize file")
-   parser.add_argument('-t','--input_type', help = "input file type (P:pairs, M:merged_nodups, OM:old_merged_nodups)")
-   args = parser.parse_args()
-
-   if not os.path.exists(OUTDIR):
-       os.mkdir(OUTDIR)
-
-   # input type selection
-   if args.input_type is 'P':
-       cols = cols_pairs
-       orientation_list = orientation_list_pairs
-   elif args.input_type is 'M':
-       cols = cols_merged_nodups
-       orientation_list = orientation_list_merged_nodups
-   elif args.input_type is 'OM':
-       cols = cols_old_merged_nodups 
-       orientation_list = orientation_list_merged_nodups
-   else:
-       print("Unknown input type"); exit(1)
-
-   # get the stats
-   cis_trans_ratio (args.pairs, cols = cols )
-   distance_histogram (args.pairs, args.chrsize, cols = cols, orientation_list = orientation_list)
-
-
+    import argparse
+ 
+    parser = argparse.ArgumentParser(description = 'QC for Pairs')
+    parser.add_argument('-p','--pairs', help = "input pairs file")
+    parser.add_argument('-c','--chrsize', help = "input chromsize file")
+    parser.add_argument('-t','--input_type', help = "input file type (P:pairs, M:merged_nodups, OM:old_merged_nodups)")
+    parser.add_argument('-O','--output_prefix', help = "prefix of output directory (output directory name will be <output_prefix>_report")
+    args = parser.parse_args()
+ 
+    if args.output_prefix:
+        outdir = args.output_prefix + '_report'
+    else:
+        outdir = 'report'
+    if not os.path.exists(outdir):
+        os.mkdir(outdir)
+ 
+    # input type selection
+    if args.input_type == 'P':
+        cols = cols_pairs
+        orientation_list = orientation_list_pairs
+    elif args.input_type == 'M':
+        cols = cols_merged_nodups
+        orientation_list = orientation_list_merged_nodups
+    elif args.input_type == 'OM':
+        cols = cols_old_merged_nodups 
+        orientation_list = orientation_list_merged_nodups
+    else:
+        print("Unknown input type"); exit(1)
+ 
+    # get the stats
+    cis_trans_ratio (args.pairs, outdir = outdir, cols = cols )
+    distance_histogram (args.pairs, args.chrsize, outdir = outdir, cols = cols, orientation_list = orientation_list)
+ 
+ 

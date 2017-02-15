@@ -1,0 +1,60 @@
+[bgzip] /n/data1/hms/dbmi/park/sl325/4dn/pairs/GM12878_insitu_DpnII_merged_nodups.tab.chrblock_sorted.txt.gz already exists; do you wish to overwrite (y or n)? [bgzip] not overwritten
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@clarinet001-062.orchestra>
+Subject: Job 1390836: <../pairix/bin/bgzip /n/data1/hms/dbmi/park/sl325/4dn/pairs/GM12878_insitu_DpnII_merged_nodups.tab.chrblock_sorted.txt> Exited
+
+Job <../pairix/bin/bgzip /n/data1/hms/dbmi/park/sl325/4dn/pairs/GM12878_insitu_DpnII_merged_nodups.tab.chrblock_sorted.txt> was submitted from host <loge.orchestra> by user <sl325> in cluster <hms_orchestra>.
+Job was executed on host(s) <clarinet001-062.orchestra>, in queue <short>, as user <sl325> in cluster <hms_orchestra>.
+</home/sl325> was used as the home directory.
+</home/sl325/git/pairsqc> was used as the working directory.
+Started at Sat Feb 11 18:24:37 2017
+Results reported at Sat Feb 11 18:24:37 2017
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+../pairix/bin/bgzip /n/data1/hms/dbmi/park/sl325/4dn/pairs/GM12878_insitu_DpnII_merged_nodups.tab.chrblock_sorted.txt
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time   :      0.04 sec.
+
+The output (if any) is above this job summary.
+
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@clarinet001-149.orchestra>
+Subject: Job 1392494: <bgzip -f /n/data1/hms/dbmi/park/sl325/4dn/pairs/GM12878_insitu_DpnII_merged_nodups.tab.chrblock_sorted.txt> Done
+
+Job <bgzip -f /n/data1/hms/dbmi/park/sl325/4dn/pairs/GM12878_insitu_DpnII_merged_nodups.tab.chrblock_sorted.txt> was submitted from host <loge.orchestra> by user <sl325> in cluster <hms_orchestra>.
+Job was executed on host(s) <clarinet001-149.orchestra>, in queue <short>, as user <sl325> in cluster <hms_orchestra>.
+</home/sl325> was used as the home directory.
+</home/sl325/git/pairsqc> was used as the working directory.
+Started at Sat Feb 11 21:34:20 2017
+Results reported at Sat Feb 11 22:29:27 2017
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+bgzip -f /n/data1/hms/dbmi/park/sl325/4dn/pairs/GM12878_insitu_DpnII_merged_nodups.tab.chrblock_sorted.txt
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time   :   3302.07 sec.
+    Max Memory :         3 MB
+    Max Swap   :       134 MB
+
+    Max Processes  :         3
+    Max Threads    :         4
+
+The output (if any) is above this job summary.
+

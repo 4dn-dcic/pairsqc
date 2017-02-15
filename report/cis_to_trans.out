@@ -1,3 +1,6 @@
-Cis reads	23,462,937
-Trans reads	12,342,386
-Cis/Trans ratio	65.529
+Total reads	1,037,949,819
+Short cis reads (<20kb)	228,633,660
+Cis reads (>20kb)	517,776,704
+Trans reads	291,539,455
+Cis/Trans ratio	63.977
+% Long-range intrachromosomal reads	49.885
