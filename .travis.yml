@@ -1,0 +1,23 @@
+language: python R
+sudo: false
+cache:
+  pip: true
+  packages
+python:
+- '3.5'
+- '2.7'
+r:
+  - release
+  - devel
+  - oldrel
+install:
+- pip install pypairix
+- pip install tox
+- pip install coveralls
+- pip install codacy-coverage
+r_github_packages: parklab/nozzle
+script:
+- bash tests/test.sh
+after_success:
+- python-codacy-coverage -r coverage.xml
+- coveralls
