@@ -169,7 +169,7 @@ class SeparationStat(object):
 
     def print_header(self, fout):
         header_str = "distance\t" \
-            + '\tdistance_range(bp)\t' \
+            + 'distance_range(bp)\t' \
             + '\t'.join('count.{}'.format(k) for k in orientation_names) \
             + '\tsum\t' \
             + '\t'.join('log10count.{}'.format(k) for k in orientation_names) \
