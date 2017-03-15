@@ -1,8 +1,7 @@
 ## Pairsqc
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d7fb14bb0c64435797a621fa677934a7)](https://www.codacy.com/app/SooLee/pairsqc?utm_source=github.com&utm_medium=referral&utm_content=SooLee/pairsqc&utm_campaign=badger)
 * Pairsqc is a tool for generating a QC report for a Hi-C pairs file. 
-
-
+* [Version history](VERSION_HISTORY.md)
 
 ### Dependency
 * Python >=2.7
@@ -29,6 +28,12 @@
   git clone https://github.com/parklab/nozzle
   cd nozzle
   ./install.sh
+  ```
+  * Plotosaurus
+  # open an R session and type in the following.
+  ```r
+  library(devtools)
+  install_url("https://github.com/SooLee/plotosaurus/archive/0.9.1.zip")
   ```
   
 ## Installation

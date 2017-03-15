@@ -9,8 +9,6 @@ rainbow_w_offset <- function(L, offset = NA){
     return( color )
 }
 
-library(devtools)
-install_url("https://github.com/SooLee/plotosaurus/archive/0.9.1.zip")
 library(plotosaurus)
 
 plot_orientation_proportion_vs_distance <- function(x, RE_len, xlim=c(2,4), no_xlabel=FALSE){
@@ -145,17 +143,26 @@ generate_pairsqc_report <- function ( sample_name = NA) {
   refImakaev = newCitation( authors= 'Imakaev et al.', title= 'Iterative correction of Hi-C data reveals hallmarks of chromosome organization', publication= 'Nature Methods', issue= '9:10', pages='999-1003', year='2012' )
 
   # section 1
-  tableData1=read.table('cis_to_trans.out',stringsAsFactors=F, header=F, sep="\t")
-  colnames(tableData1) = c('QC field','value')
+  table_files = list.files('.', pattern='*cis_to_trans.out$')
+  sample_names = sub('.?cis_to_trans.out','',table_files, perl=T, fixed=F)
+  tableData1 = do.call(data.frame, sapply(table_files, function(table_file){
+    tableData=read.table(table_file,stringsAsFactors=F, header=F, sep="\t")
+    colnames(tableData) = c('QC field','value')
+    return(tableData)
+  }, simplify=F))[,c(1,seq(2,2*length(table_files),2))]
+  colnames(tableData1) = c('QC field', sample_names)
+
   t1 <- newTable( tableData1, significantDigits=0, exportId="TABLE_1", "Cis-to-trans ratio" );
   p1 <- newParagraph( "Cis-to-trans ratio is computed as the ratio of long-range cis reads (>20kb) to trans reads plus long-range cis reads. Typically, cis-to-trans ratio higher than 40% is required. Percentage of long-range cis reads is the ratio of long-range cis reads to total number of reads. Minimum 15% is required and 40% or higher suggests a good library", asReference( refRao ), "." );
   
   # section 2
-  png2= 'plots/proportion.png'
-  pdf2= 'plots/proportion.pdf'
-  f2 <- newFigure( png2, fileHighRes=pdf2, exportId="FIGURE_2", "Proportion of read orientation versus genomic separation");
-  #eq2a <- "<math><mrow><msup> <mn> 10 </mn> <mn> 3.5 </mn> </msup></mrow></math>"
-  #eq2b <- "<math><mrow><msup> <mn> 10 </mn> <mn> 4.5 </mn> </msup></mrow></math>"
+  # using sample_names from section 1 (same ordering)
+  png2_files = paste('plots/', sample_names, '.proportion.png',sep='')
+  pdf2_files = gsub('png$','pdf',png2_files)
+  f2list <- mapply(function(png2, pdf2, sample_name) { 
+                       newFigure( png2, fileHighRes=pdf2, exportId=paste("FIGURE_2", sample_name, sep="."), 
+                                  paste("Proportion of read orientation versus genomic separation : ", asStrong(sample_name), sep=""));
+                   }, png2_files, pdf2_files, sample_names, SIMPLIFY=FALSE)
   eq2a = '10^3.5'
   eq2b = '10^4.5'
   p2 <- newParagraph("Contact frequency (number of reads, left) and proportion of reads (right) are shown, stratified by read orientation. Good four-cutter and six-cutter samples would converge at ~3kb (", eq2a, ") and ~30kb (", eq2b, "), respectively", asReference( refRao ), ". Convergence is determined by the standard deviation of the proportions being less than 0.005.")
@@ -166,11 +173,14 @@ generate_pairsqc_report <- function ( sample_name = NA) {
   #f3 <- newFigure( png3, fileHighRes=pdf3, exportId="FIGURE_3", "Number of reads versus genomic separation, stratified by read orientation"); 
   
   # section 4
-  png4= 'plots/log10prob.png'
-  pdf4= 'plots/log10prob.pdf'
-  f4 <- newFigure( png4, fileHighRes=pdf4, exportId="FIGURE_4", "Contact probability versus genomic separation");
+  # using sample_names from section 1 (same ordering)
+  png4_files = paste('plots/', sample_names, '.log10prob.png',sep='')
+  pdf4_files = gsub('png$','pdf',png4_files)
+  f4list <- mapply(function(png4, pdf4, sample_name) {
+                       newFigure( png4, fileHighRes=pdf4, 
+                                  paste("Contact probability versus genomic separation : ", asStrong(sample_name), sep=""));
+                   }, png4_files, pdf4_files, sample_names, SIMPLIFY=FALSE)
   p4 <- newParagraph( "Contact probability (number of reads, normalized by number of bins and bin size) is shown with respect to genomic separation between mates", asReference( refImakaev), asReference( refSanborn ), ". The slope between distance 10kb ~ 300kb (10^4 ~ 10^5.5) representing a TAD is calculated. A good mitotic sample would have a slope close to ~ -0.76", asReference( refSanborn ), "." );
-  
   
   # section 5
   # png5= 'plots/log10prob_chr.png'
@@ -179,9 +189,11 @@ generate_pairsqc_report <- function ( sample_name = NA) {
 
   # Phase 2: assemble report structure bottom-up
   s1 <- addTo( s1, p1, t1);
-  s2 <- addTo( s2, p2, f2 );
+  s2 <- addTo( s2, p2);
+  for(f2 in f2list) { s2 <- addTo( s2, f2); }
   #s3 <- addTo( s3, f3);
-  s4 <- addTo( s4, p4, f4);
+  s4 <- addTo( s4, p4 );
+  for(f4 in f4list) { s4 <- addTo( s4, f4); }
   # s5 <- addTo( s5, f5);
   references <- addTo( references, refRao, refImakaev, refSanborn )
   #r <- addTo( r, s1, s2, s3, s4, references );
@@ -198,29 +210,35 @@ generate_pairsqc_report <- function ( sample_name = NA) {
 
 
 cwd = getwd()
-plot_table_file = paste(report_dir,"plot_table.out",sep="/")
-plot_dir = paste(report_dir,"plots",sep="/")
+sample_names = gsub('.?plot_table.out$', '', list.files(report_dir, pattern='*.plot_table.out$'), perl=T, fixed=F)
 
-x=read.table(plot_table_file,sep="\t",stringsAsFactors=F,header=T)
+plot_for_sample<-function(sample_name, report_dir) {
+  setwd(cwd)
+  plot_dir = paste(report_dir,"plots",sep="/")
+  plot_table_file = paste(report_dir, "/", sample_name, ".plot_table.out", sep="")
+  
+  x=read.table(plot_table_file,sep="\t",stringsAsFactors=F,header=T)
+  dir.create(plot_dir, showWarnings = FALSE, recursive = TRUE)
+  setwd(plot_dir)
+  pngpdf_preset( list(
+      function() plot_orientation_log10count_vs_distance(x, RE_len),
+      function() plot_orientation_proportion_vs_distance(x, RE_len, no_xlabel=T),
+      function() plot_sd_with_cutoff(x)
+    ), paste(sample_name, "proportion", sep="."), stylefunc0, get_preset(3), add.date=FALSE
+  )
+  
+  pngpdf_preset( list(
+      function() plot_contact_probability_vs_distance(x),
+      function() plot_contact_frequency_vs_genomic_separation_per_chr(x)
+    ), paste(sample_name, "log10prob", sep="."), stylefunc0, get_preset(2,'h50'), add.date=FALSE
+  )
+  
+  #pngpdf.nodate( function()plot_contact_probability_vs_distance(x) ,"log10prob")
+  #pngpdf.nodate( function()plot_contact_frequency_vs_genomic_separation_per_chr(x), "log10prob_chr", height=5.5 )
+  #pngpdf.nodate( function()plot_entropy(x), "entropy", height=4) 
+}
 
-dir.create(plot_dir, showWarnings = FALSE, recursive = TRUE)
-setwd(plot_dir)
-pngpdf_preset( list(
-    function() plot_orientation_log10count_vs_distance(x, RE_len),
-    function() plot_orientation_proportion_vs_distance(x, RE_len, no_xlabel=T),
-    function() plot_sd_with_cutoff(x)
-  ), "proportion", stylefunc0, get_preset(3), add.date=FALSE
-)
-
-pngpdf_preset( list(
-    function() plot_contact_probability_vs_distance(x),
-    function() plot_contact_frequency_vs_genomic_separation_per_chr(x)
-  ), "log10prob", stylefunc0, get_preset(2,'h50'), add.date=FALSE
-)
-
-#pngpdf.nodate( function()plot_contact_probability_vs_distance(x) ,"log10prob")
-#pngpdf.nodate( function()plot_contact_frequency_vs_genomic_separation_per_chr(x), "log10prob_chr", height=5.5 )
-#pngpdf.nodate( function()plot_entropy(x), "entropy", height=4)
+sapply(sample_names, plot_for_sample, report_dir = report_dir)
 
 setwd(cwd)
 setwd(report_dir)
