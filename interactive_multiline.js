@@ -3,9 +3,9 @@
 //
 // Usage example:
 //
-// tsvfile = 'somedatafile.tsv';
 // tsvcolfile = 'tsvcol_for_somedatafile.tsv';
 // d3.tsv(tsvcolfile, function(tsvcolumns) {
+//  tsvfile = 'somedatafile.tsv';
 //  interactive_multiline_plot(tsvfile, tsvcolumns, 1, 9, 0, 4000, 'log10 distance', 'read count', 'my_div_id');
 // });
 //
