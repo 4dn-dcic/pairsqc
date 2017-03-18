@@ -130,6 +130,7 @@ generate_pairsqc_report <- function ( sample_name = NA) {
 
   # Phase 1: create report elements
   r <- newCustomReport( report_title ); 
+  d3script <- newHtml ("<script src=\"https://d3js.org/d3.v3.js\"></script><script src=\"./interactive_multiline.js\"></script>");
   s1 <- newSection( "Cis-to-trans ratio" );
   s2 <- newSection( "Proportion of read orientation versus genomic separation");
   s3 <- newSection( "Number of reads versus genomic separation, stratified by read orientation" );
@@ -183,9 +184,9 @@ generate_pairsqc_report <- function ( sample_name = NA) {
   p4 <- newParagraph( "Contact probability (number of reads, normalized by number of bins and bin size) is shown with respect to genomic separation between mates", asReference( refImakaev), asReference( refSanborn ), ". The slope between distance 10kb ~ 300kb (10^4 ~ 10^5.5) representing a TAD is calculated. A good mitotic sample would have a slope close to ~ -0.76", asReference( refSanborn ), "." );
   
   # section 5
-  # png5= 'plots/log10prob_chr.png'
-  # pdf5= 'plots/log10prob_chr.pdf'
-  # f5 <- newFigure( png5, fileHighRes=pdf5, exportId="FIGURE_5", "Contact probability versus genomic separation, separated by chromosome");
+  # this section has d3 elements
+  ss5_list <- sapply(sample_names, function(sn) newSection( sn ), simplify=FALSE);
+  ss5divlist <- sapply(sample_names, function(sn) newHtml(paste("<div class='figure' id='d3div_s5_", sn, "___'></div><script src=\"distanceplot_perchr.", sn , ".js\"></script>", sep="")), simplify=FALSE);
 
   # Phase 2: assemble report structure bottom-up
   s1 <- addTo( s1, p1, t1);
@@ -195,10 +196,11 @@ generate_pairsqc_report <- function ( sample_name = NA) {
   s4 <- addTo( s4, p4 );
   for(f4 in f4list) { s4 <- addTo( s4, f4); }
   # s5 <- addTo( s5, f5);
+  for(i in 1:length(sample_names)) { ss5_list[[i]] <- addTo( ss5_list[[i]], ss5divlist[[i]]); s5 <- addTo( s5, ss5_list[[i]] ); }
   references <- addTo( references, refRao, refImakaev, refSanborn )
   #r <- addTo( r, s1, s2, s3, s4, references );
   #r <- addTo( r, s1, s2, s4, s5, references );
-  r <- addTo( r, s1, s2, s4, references );
+  r <- addTo( r, d3script, s1, s2, s4, s5, references );
   
   # Phase 3: render report to file
   writeReport( r, filename="pairsqc_report" ); # w/o extension
