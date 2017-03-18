@@ -185,8 +185,7 @@ generate_pairsqc_report <- function ( sample_name = NA) {
   
   # section 5
   # this section has d3 elements
-  ss5_list <- sapply(sample_names, function(sn) newSection( sn ), simplify=FALSE);
-  ss5divlist <- sapply(sample_names, function(sn) newHtml(paste("<div class='figure' id='d3div_s5_", sn, "___'></div><script src=\"distanceplot_perchr.", sn , ".js\"></script>", sep="")), simplify=FALSE);
+  ss5divlist <- mapply(function(sn, k) newHtml(paste("<div class='figure'><div class='caption'><p><strong>Interactive Figure&nbsp;",k,".&nbsp;</strong>Contact probability versus genomic separation, per chromosome : ", asStrong(sn), "</div><div id='d3div_s5_", sn, "___'></div></div><script src=\"distanceplot_perchr.", sn , ".js\"></script>", sep="")), sample_names, 1:length(sample_names), SIMPLIFY=FALSE);
 
   # Phase 2: assemble report structure bottom-up
   s1 <- addTo( s1, p1, t1);
@@ -196,7 +195,7 @@ generate_pairsqc_report <- function ( sample_name = NA) {
   s4 <- addTo( s4, p4 );
   for(f4 in f4list) { s4 <- addTo( s4, f4); }
   # s5 <- addTo( s5, f5);
-  for(i in 1:length(sample_names)) { ss5_list[[i]] <- addTo( ss5_list[[i]], ss5divlist[[i]]); s5 <- addTo( s5, ss5_list[[i]] ); }
+  for(i in 1:length(sample_names)) { s5 <- addTo( s5, ss5divlist[[i]] ); }
   references <- addTo( references, refRao, refImakaev, refSanborn )
   #r <- addTo( r, s1, s2, s3, s4, references );
   #r <- addTo( r, s1, s2, s4, s5, references );
