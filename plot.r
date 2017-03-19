@@ -57,6 +57,8 @@ plot_contact_probability_vs_distance <- function(x, xlim=c(3.2,8), no_xlabel=FAL
   spacing=abs(yy[1]*0.07)
   text(xx[1], yy[1]+spacing, paste("slope=",round(tad_slope,2),sep=' '), pos=4)
   abline(a=tad_intercept + spacing, b=tad_slope, lty=2)
+
+  return(round(tad_slope,2));
 }
 
 
@@ -73,6 +75,7 @@ plot_entropy <- function(x, xlim=c(2,4), plt=c(0.2,0.95,0.2,0.95)){
 
 
 plot_sd_with_cutoff <- function(x, xlim=c(2,4)){
+  x=x[which(x$distance>=xlim[1] & x$distance<=xlim[2]),];
   sds=apply(x[,c('proportion.Inner','proportion.Outer','proportion.Right','proportion.Left')],1,sd)
   plot(x$distance, log10(sds), type='o',pch=19,ylab="sd",xlab="distance",xlim=xlim,axes=F, col=COLOR3B()[1])
   exp_axis(xlim,1)
@@ -85,6 +88,13 @@ plot_sd_with_cutoff <- function(x, xlim=c(2,4)){
   abline(v=x[almost_converged[1] ,"distance"],col=COLOR3B()[2],lty=2)
   abline(v=x[well_converged[1] ,"distance"],col=COLOR3B()[3],lty=2)
   legend("topright",c("sd<0.02","sd<0.005"),col=COLOR3B()[2:3],pch=19,bty='n')
+
+  ## determination for convergence
+  if(RE_len==4) { conv_ind = which(x$distance>=3.5) } else { conv_ind = which(x$distance>=4.5) } 
+  if(length(setdiff(conv_ind, well_converged))==0) { return('Very Good'); 
+  } else if(length(setdiff(conv_ind, almost_converged))==0) { return('Good'); 
+  } else { return('Not converged'); }
+
 }
 
 
@@ -131,7 +141,7 @@ generate_pairsqc_report <- function ( sample_name = NA) {
   # Phase 1: create report elements
   r <- newCustomReport( report_title ); 
   d3script <- newHtml ("<script src=\"https://d3js.org/d3.v3.js\"></script><script src=\"./interactive_multiline.js\"></script>");
-  s1 <- newSection( "Cis-to-trans ratio" );
+  s1 <- newSection( "Summary table" );
   s2 <- newSection( "Proportion of read orientation versus genomic separation");
   s3 <- newSection( "Number of reads versus genomic separation, stratified by read orientation" );
   s4 <- newSection( "Contact probability versus genomic separation" );
@@ -144,8 +154,8 @@ generate_pairsqc_report <- function ( sample_name = NA) {
   refImakaev = newCitation( authors= 'Imakaev et al.', title= 'Iterative correction of Hi-C data reveals hallmarks of chromosome organization', publication= 'Nature Methods', issue= '9:10', pages='999-1003', year='2012' )
 
   # section 1
-  table_files = list.files('.', pattern='*cis_to_trans.out$')
-  sample_names = sub('.?cis_to_trans.out','',table_files, perl=T, fixed=F)
+  table_files = list.files('.', pattern='*summary.out$')
+  sample_names = sub('.?summary.out','',table_files, perl=T, fixed=F)
   tableData1 = do.call(data.frame, sapply(table_files, function(table_file){
     tableData=read.table(table_file,stringsAsFactors=F, header=F, sep="\t")
     colnames(tableData) = c('QC field','value')
@@ -153,8 +163,8 @@ generate_pairsqc_report <- function ( sample_name = NA) {
   }, simplify=F))[,c(1,seq(2,2*length(table_files),2))]
   colnames(tableData1) = c('QC field', sample_names)
 
-  t1 <- newTable( tableData1, significantDigits=0, exportId="TABLE_1", "Cis-to-trans ratio" );
-  p1 <- newParagraph( "Cis-to-trans ratio is computed as the ratio of long-range cis reads (>20kb) to trans reads plus long-range cis reads. Typically, cis-to-trans ratio higher than 40% is required. Percentage of long-range cis reads is the ratio of long-range cis reads to total number of reads. Minimum 15% is required and 40% or higher suggests a good library", asReference( refRao ), "." );
+  t1 <- newTable( tableData1, significantDigits=0, exportId="TABLE_1", "Summary Table" );
+  p1 <- newParagraph( "Cis-to-trans ratio is computed as the ratio of long-range cis reads (>20kb) to trans reads plus long-range cis reads. Typically, cis-to-trans ratio higher than 40% is required. Percentage of long-range cis reads is the ratio of long-range cis reads to total number of reads. Minimum 15% is required and 40% or higher suggests a good library", asReference( refRao ), ". Convergence is determined as standard deviation of proportions of four read orientations to be <0.002 (Very good) or <0.05 (Good) (See below section ", asStrong("Proportion of read orientation versus genomic separation"), "). The slope of log10 contact probability vs distance between 10kb ~ 300kb representing TAD is also provided as well. (See below section ", asStrong("Contact probability versus genomic separation"), ".)");
   
   # section 2
   # using sample_names from section 1 (same ordering)
@@ -221,22 +231,41 @@ plot_for_sample<-function(sample_name, report_dir) {
   x=read.table(plot_table_file,sep="\t",stringsAsFactors=F,header=T)
   dir.create(plot_dir, showWarnings = FALSE, recursive = TRUE)
   setwd(plot_dir)
-  pngpdf_preset( list(
+  res = pngpdf_preset( list(
       function() plot_orientation_log10count_vs_distance(x, RE_len),
       function() plot_orientation_proportion_vs_distance(x, RE_len, no_xlabel=T),
       function() plot_sd_with_cutoff(x)
     ), paste(sample_name, "proportion", sep="."), stylefunc0, get_preset(3), add.date=FALSE
   )
+  convergence_determinant = res[[3]];
   
-  pngpdf_preset( list(
-      function() plot_contact_probability_vs_distance(x),
-      function() plot_contact_frequency_vs_genomic_separation_per_chr(x)
-    ), paste(sample_name, "log10prob", sep="."), stylefunc0, get_preset(2,'h50'), add.date=FALSE
+  # pngpdf_preset( list(
+  #    function() plot_contact_probability_vs_distance(x),
+  #    function() plot_contact_frequency_vs_genomic_separation_per_chr(x)
+  #  ), paste(sample_name, "log10prob", sep="."), stylefunc0, get_preset(2,'h50'), add.date=FALSE
+  #)
+
+  res = pngpdf_preset( list(
+      function() plot_contact_probability_vs_distance(x)
+    ), paste(sample_name, "log10prob", sep="."), stylefunc0, get_preset(1), add.date=FALSE
   )
-  
+  slope = res[[1]]
+   
   #pngpdf.nodate( function()plot_contact_probability_vs_distance(x) ,"log10prob")
   #pngpdf.nodate( function()plot_contact_frequency_vs_genomic_separation_per_chr(x), "log10prob_chr", height=5.5 )
   #pngpdf.nodate( function()plot_entropy(x), "entropy", height=4) 
+
+  ## printing cis-trans stats and post-plot stats to summary.out
+  res_all = as.data.frame(rbind(c("convergence",convergence_determinant), c("slope", slope)), stringsAsFactors=FALSE)
+  colnames(res_all)=c('V1','V2')
+  setwd(cwd)
+  cis_file = paste(report_dir, '/', sample_name, ".cis_to_trans.out", sep="");
+  res_file = paste(report_dir, '/', sample_name, ".summary.out", sep="");
+  original_res = read.table(cis_file, stringsAsFactors=FALSE, header=FALSE, sep="\t");
+  colnames(original_res)=c('V1','V2')
+  res_all = rbind(original_res, res_all)
+  write.table(res_all, res_file, quote=FALSE, col.names=FALSE, row.names=FALSE, sep="\t")
+  setwd(plot_dir)
 }
 
 sapply(sample_names, plot_for_sample, report_dir = report_dir)
