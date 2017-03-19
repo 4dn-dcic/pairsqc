@@ -33,7 +33,7 @@
   ```r
   # open an R session and type in the following.
   library(devtools)
-  install_url("https://github.com/SooLee/plotosaurus/archive/0.9.1.zip")
+  install_url("https://github.com/SooLee/plotosaurus/archive/0.9.2.zip")
   ```
   
 ## Installation
