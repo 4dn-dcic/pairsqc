@@ -1,8 +1,7 @@
 ## Pairsqc
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d7fb14bb0c64435797a621fa677934a7)](https://www.codacy.com/app/SooLee/pairsqc?utm_source=github.com&utm_medium=referral&utm_content=SooLee/pairsqc&utm_campaign=badger)
 * Pairsqc is a tool for generating a QC report for a Hi-C pairs file. 
-
-
+* [Version history](VERSION_HISTORY.md)
 
 ### Dependency
 * Python >=2.7
@@ -29,6 +28,12 @@
   git clone https://github.com/parklab/nozzle
   cd nozzle
   ./install.sh
+  ```
+  * Plotosaurus
+  ```r
+  # open an R session and type in the following.
+  library(devtools)
+  install_url("https://github.com/SooLee/plotosaurus/archive/0.9.2.zip")
   ```
   
 ## Installation
@@ -67,11 +72,10 @@ Rscript plot.r <enzyme_type> [<report_dir>]
 
 ### Output
 If output prefix is not specified, the output directory will be './report'
-The python script generates two text output files, `report/cis_to_trans.out` and `report/plot_table.out`.
+The python script generates two text output files, `report/$sample_name.cis_to_trans.out` and `report/$sample_name.plot_table.out`.
 The R script generates image files in `report/plots`.
-The output report can be found in `report/pairsqc_report.html`. (example : https://s3.amazonaws.com/4dn-github-related-files/pairsqc/report/pairsqc_report.html )
+The output report can be found in `report/pairsqc_report.html`. (example : https://s3.amazonaws.com/4dn-github-related-files/pairsqc/test_report_d3_v4/pairsqc_report.html (multi-sample) )
 * Output text file example : [cis_to_trans.out](report/cis_to_trans.out) [plot_table.out](report/plot_table.out)
-* Output report example : [report](report/pairsqc_report.html) : To see a rendered version, download `report.zip` (example 1) or `report2.zip` (example 2), uncompress, and open `report/pairsqc_report.html`.
 
 ### Example run
 ```

@@ -3,8 +3,8 @@ import math
 import os
 
 SEPARATOR = '|'
-CIS_TRANS_OUT_FILE_NAME =  '/cis_to_trans.out'
-PLOT_TABLE_OUT_FILE_NAME = '/plot_table.out'
+CIS_TRANS_OUT_FILE_SUFFIX =  'cis_to_trans.out'
+PLOT_TABLE_OUT_FILE_SUFFIX = 'plot_table.out'
 
 
 class ColIndices(object):
@@ -231,7 +231,7 @@ def get_distance_and_orientation (line, cols):
     return(distance, orientation)
 
 
-def cis_trans_ratio (pairs_file, outdir='report', DIST_THRES=20000, cols= cols_pairs):
+def cis_trans_ratio (pairs_file, outfilename, DIST_THRES=20000, cols= cols_pairs):
     """measure cis/trans ratio for a given pairs file"""
 
     cts = CisTransStat()
@@ -255,11 +255,11 @@ def cis_trans_ratio (pairs_file, outdir='report', DIST_THRES=20000, cols= cols_p
     cts.calculate_percent_long_range_intra()
     
     # print stats
-    with open(outdir + '/' + CIS_TRANS_OUT_FILE_NAME,'w') as f:
+    with open(outfilename,'w') as f:
         cts.print_stat(f)
 
 
-def distance_histogram (pairs_file, chromsize_file, outdir='report', cols=cols_pairs, orientation_list = orientation_list_pairs, max_logdistance=8.4, min_logdistance=1, log_binsize=0.1):
+def distance_histogram (pairs_file, chromsize_file, outfilename, cols=cols_pairs, orientation_list = orientation_list_pairs, max_logdistance=8.4, min_logdistance=1, log_binsize=0.1):
     """create a log10-scale binned histogram table for read separation distance histogram
     The histogram is stratefied by read orientation (4 different orientations)
     The table includes raw counts, log10 counts (pseudocounts added), contact probability, log10 contact probability, and proportions for orientation (pseudocounts added)
@@ -310,7 +310,7 @@ def distance_histogram (pairs_file, chromsize_file, outdir='report', cols=cols_p
         ss[bin_number].calculate_contact_probability(bin_mid, bin_size)
 
     # print histogram
-    with open(outdir + '/' + PLOT_TABLE_OUT_FILE_NAME,'w') as f:
+    with open(outfilename,'w') as f:
         ss[0].print_header(f)
         for bin_number in bins.range:
             bin_mid = bins.get_bin_mid(bin_number)
@@ -326,11 +326,12 @@ if __name__ == '__main__':
     parser.add_argument('-p','--pairs', help = "input pairs file")
     parser.add_argument('-c','--chrsize', help = "input chromsize file")
     parser.add_argument('-t','--input_type', help = "input file type (P:pairs, M:merged_nodups, OM:old_merged_nodups)")
-    parser.add_argument('-O','--output_prefix', help = "prefix of output directory (output directory name will be <output_prefix>_report")
+    parser.add_argument('-O','--outdir_prefix', help = "prefix of output directory (output directory name will be <outdir_prefix>_report")
+    parser.add_argument('-s','--sample_name', help = "sample name to be used as the file prefix and in the report (do not include space)")
     args = parser.parse_args()
  
-    if args.output_prefix:
-        outdir = args.output_prefix + '_report'
+    if args.outdir_prefix:
+        outdir = args.outdir_prefix + '_report'
     else:
         outdir = 'report'
     if not os.path.exists(outdir):
@@ -349,8 +350,16 @@ if __name__ == '__main__':
     else:
         print("Unknown input type"); exit(1)
  
+    # sample name
+    if args.sample_name:
+        sample_name = args.sample_name
+    else:
+        sample_name = ''
+
+    CIS_TRANS_OUT_FILE_PATH = outdir + '/' + sample_name + '.' + CIS_TRANS_OUT_FILE_SUFFIX
+    PLOT_TABLE_OUT_FILE_PATH = outdir + '/' + sample_name + '.' + PLOT_TABLE_OUT_FILE_SUFFIX
+
     # get the stats
-    cis_trans_ratio (args.pairs, outdir = outdir, cols = cols )
-    distance_histogram (args.pairs, args.chrsize, outdir = outdir, cols = cols, orientation_list = orientation_list)
- 
- 
+    cis_trans_ratio (args.pairs, outfilename=CIS_TRANS_OUT_FILE_PATH, cols = cols)
+    distance_histogram (args.pairs, args.chrsize, outfilename=PLOT_TABLE_OUT_FILE_PATH, cols = cols, orientation_list = orientation_list)
+  
