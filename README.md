@@ -72,9 +72,9 @@ Rscript plot.r <enzyme_type> [<report_dir>]
 
 ### Output
 If output prefix is not specified, the output directory will be './report'
-The python script generates two text output files, `report/cis_to_trans.out` and `report/plot_table.out`.
+The python script generates two text output files, `report/$sample_name.cis_to_trans.out` and `report/$sample_name.plot_table.out`.
 The R script generates image files in `report/plots`.
-The output report can be found in `report/pairsqc_report.html`. (example : https://s3.amazonaws.com/4dn-github-related-files/pairsqc/report/pairsqc_report.html, https://s3.amazonaws.com/4dn-github-related-files/pairsqc/test_report_d3_v4/pairsqc_report.html (multi-sample) )
+The output report can be found in `report/pairsqc_report.html`. (example : https://s3.amazonaws.com/4dn-github-related-files/pairsqc/test_report_d3_v4/pairsqc_report.html (multi-sample) )
 * Output text file example : [cis_to_trans.out](report/cis_to_trans.out) [plot_table.out](report/plot_table.out)
 
 ### Example run
