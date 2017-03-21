@@ -10,6 +10,8 @@ rainbow_w_offset <- function(L, offset = NA){
 }
 
 library(plotosaurus)
+library(stringr)
+source("https://raw.githubusercontent.com/SooLee/d3forNozzleR/master/interactive_multiline_d3prep.r") # for d3 integration
 
 plot_orientation_proportion_vs_distance <- function(x, RE_len, xlim=c(2,4), no_xlabel=FALSE){
   matplot(x$distance,x[,c('proportion.Inner','proportion.Outer','proportion.Right','proportion.Left')],pch=19,type='o',xlab="", ylab="Proportion",lwd=1,lty=1, col=COLOR4(), axes=F, xlim=xlim)
@@ -124,13 +126,33 @@ plot_contact_frequency_vs_genomic_separation_per_chr <- function(x) {
   legend("topleft", chrnames, col = rainbow_w_offset(L), lty=1, lwd=1, bty='n' ,xpd=T, cex=0.8)
 }
 
+prep_plot_contact_frequency_vs_genomic_separation_per_chr_d3 <- function(x, sample_name, report_dir, xmin=3.5, xmax=7) {
+  ycolumns = colnames(x)[grep('log10prob_per_chr',colnames(x))]
+  y = data.frame(x[,ycolumns])
+  valid = which(x$distance > xmin & x$distance < xmax)
+  y=y[valid,]
+  ylim = range(apply(y,2,function(xx){ ind =which(xx>-90); if(length(ind)==0) return(NA) else return( range(xx[ind])) }), na.rm=T)
+  ymin= ylim[1]
+  ymax = ylim[2]
+  L = ncol(y)
+  chrnames = sub("log10prob_per_chr.","",colnames(y))
+  colors = substr(str_to_lower(rainbow_w_offset(L)),1,7)
+  xlab = "log10 genomic separation"
+  ylab = "log10 contact frequency"
+  div_id = paste("d3div_contact_frequency_vs_genomic_separation_per_chr_", sample_name, "___", sep="")
+  js_file_prefix = "distanceplot_perchr"
+  tsvfile = paste("./", sample_name, ".plot_table.out", sep="")
+  tsvcoldata = data.frame(columnx="distance", columny=ycolumns, color=colors, offcolor="#999999", name=chrnames, stringsAsFactors=FALSE)
+  return( create_d3_js_for_interactive_multiline_plot(sample_name, xmin, xmax, ymin, ymax, div_id, xlab, ylab, report_dir, js_file_prefix, tsvfile, tsvcoldata) )
+}
+
 
 ########################
 
 
 require( "Nozzle.R1" )
 
-generate_pairsqc_report <- function ( sample_name = NA) {
+generate_pairsqc_report <- function ( sample_name = NA, d3_prep_res = NULL) {
 
   if(is.na(sample_name)) { 
     report_title = "PairsQC Report"
@@ -140,7 +162,7 @@ generate_pairsqc_report <- function ( sample_name = NA) {
 
   # Phase 1: create report elements
   r <- newCustomReport( report_title ); 
-  d3script <- newHtml ("<script src=\"https://d3js.org/d3.v3.js\"></script><script src=\"./interactive_multiline.js\"></script>");
+  d3script <- newHtml (d3_prep_res[[1]]$html_common_script_tag);
   s1 <- newSection( "Summary table" );
   s2 <- newSection( "Proportion of read orientation versus genomic separation");
   s3 <- newSection( "Number of reads versus genomic separation, stratified by read orientation" );
@@ -195,7 +217,7 @@ generate_pairsqc_report <- function ( sample_name = NA) {
   
   # section 5
   # this section has d3 elements
-  ss5divlist <- mapply(function(sn, k) newHtml(paste("<div class='figure'><div class='caption'><p><strong>Interactive Figure&nbsp;",k,".&nbsp;</strong>Contact probability versus genomic separation, per chromosome : ", asStrong(sn), "</div><div id='d3div_s5_", sn, "___'></div></div><script src=\"distanceplot_perchr.", sn , ".js\"></script>", sep="")), sample_names, 1:length(sample_names), SIMPLIFY=FALSE);
+  ss5divlist <- mapply(function(sn, k) newHtml(paste("<div class='figure'><div class='caption'><p><strong>Interactive Figure&nbsp;",k,".&nbsp;</strong>Contact probability versus genomic separation, per chromosome : ", asStrong(sn), "</div><div id='", d3_prep_res[[sn]]$div_id, "'></div></div>",d3_prep_res[[sn]]$html_script_tag, sep="")), sample_names, 1:length(sample_names), SIMPLIFY=FALSE);
 
   # Phase 2: assemble report structure bottom-up
   s1 <- addTo( s1, p1, t1);
@@ -216,9 +238,7 @@ generate_pairsqc_report <- function ( sample_name = NA) {
 
 }
 
-
 ##################
-
 
 cwd = getwd()
 sample_names = gsub('.?plot_table.out$', '', list.files(report_dir, pattern='*.plot_table.out$'), perl=T, fixed=F)
@@ -255,10 +275,13 @@ plot_for_sample<-function(sample_name, report_dir) {
   #pngpdf.nodate( function()plot_contact_frequency_vs_genomic_separation_per_chr(x), "log10prob_chr", height=5.5 )
   #pngpdf.nodate( function()plot_entropy(x), "entropy", height=4) 
 
+  # d3 plot
+  setwd(cwd)
+  d3plot_prep_res = prep_plot_contact_frequency_vs_genomic_separation_per_chr_d3(x, sample_name, report_dir)
+
   ## printing cis-trans stats and post-plot stats to summary.out
   res_all = as.data.frame(rbind(c("convergence",convergence_determinant), c("slope", slope)), stringsAsFactors=FALSE)
   colnames(res_all)=c('V1','V2')
-  setwd(cwd)
   cis_file = paste(report_dir, '/', sample_name, ".cis_to_trans.out", sep="");
   res_file = paste(report_dir, '/', sample_name, ".summary.out", sep="");
   original_res = read.table(cis_file, stringsAsFactors=FALSE, header=FALSE, sep="\t");
@@ -266,11 +289,14 @@ plot_for_sample<-function(sample_name, report_dir) {
   res_all = rbind(original_res, res_all)
   write.table(res_all, res_file, quote=FALSE, col.names=FALSE, row.names=FALSE, sep="\t")
   setwd(plot_dir)
+
+  return(d3plot_prep_res)
 }
 
-sapply(sample_names, plot_for_sample, report_dir = report_dir)
+d3_prep_res = sapply(sample_names, plot_for_sample, report_dir = report_dir, simplify=FALSE)
+print(d3_prep_res)
 
 setwd(cwd)
 setwd(report_dir)
-generate_pairsqc_report()
+generate_pairsqc_report(d3_prep_res = d3_prep_res)
 
