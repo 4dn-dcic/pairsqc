@@ -46,7 +46,7 @@ git clone https://github.com/4dn-dcic/pairsqc
 1) pairsqc.py
 ```
 usage: pairsqc.py [-h] [-p PAIRS] [-c CHRSIZE] [-t INPUT_TYPE]
-                  [-O OUTPUT_PREFIX]
+                  [-O OUTDIR_PREFIX] [-s SAMPLE_NAME]
 
 QC for Pairs
 
@@ -59,9 +59,12 @@ optional arguments:
   -t INPUT_TYPE, --input_type INPUT_TYPE
                         input file type (P:pairs, M:merged_nodups,
                         OM:old_merged_nodups)
-  -O OUTPUT_PREFIX, --output_prefix OUTPUT_PREFIX
+  -O OUTDIR_PREFIX, --outdir_prefix OUTDIR_PREFIX
                         prefix of output directory (output directory name will
-                        be <output_prefix>_report
+                        be <outdir_prefix>_report
+  -s SAMPLE_NAME, --sample_name SAMPLE_NAME
+                        sample name to be used as the file prefix and in the
+                        report (do not include space)
 ```
 2) plot.r
 ```
