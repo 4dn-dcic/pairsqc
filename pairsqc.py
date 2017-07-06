@@ -354,7 +354,7 @@ if __name__ == '__main__':
     if args.sample_name:
         sample_name = args.sample_name
     else:
-        sample_name = ''
+        sample_name = 'sample'
 
     CIS_TRANS_OUT_FILE_PATH = outdir + '/' + sample_name + '.' + CIS_TRANS_OUT_FILE_SUFFIX
     PLOT_TABLE_OUT_FILE_PATH = outdir + '/' + sample_name + '.' + PLOT_TABLE_OUT_FILE_SUFFIX
