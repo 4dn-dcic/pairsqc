@@ -62,6 +62,10 @@ optional arguments:
   -O OUTPUT_PREFIX, --output_prefix OUTPUT_PREFIX
                         prefix of output directory (output directory name will
                         be <output_prefix>_report
+  -M MAX_LOGDISTANCE, --max_logdistance MAX_LOGDISTANCE
+                        Maximum log distance. This number should not be larger
+                        than all chromosomes. Choose 8.2 for mouse. Default
+                        8.4 (human).
 ```
 2) plot.r
 ```
@@ -83,6 +87,8 @@ python pairsqc.py -p test_samples/merged_nodup.tab.chrblock_sorted.txt.gz -c tes
 Rscript plot.r 4
 zip report.zip report # if you want to create a zip file for the report.
 ```
+* Note : The default max logdistance is set to be 8.4, which works for human. For non-human species, use -M option to reset the max logdistance. (e.g. -M 8.2 for mouse)
+
 
 &nbsp;
 ### QC metrics and plots
