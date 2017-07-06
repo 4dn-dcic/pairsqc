@@ -328,6 +328,7 @@ if __name__ == '__main__':
     parser.add_argument('-t','--input_type', help = "input file type (P:pairs, M:merged_nodups, OM:old_merged_nodups)")
     parser.add_argument('-O','--outdir_prefix', help = "prefix of output directory (output directory name will be <outdir_prefix>_report")
     parser.add_argument('-s','--sample_name', help = "sample name to be used as the file prefix and in the report (do not include space)")
+    parser.add_argument('-M','--max_logdistance', help = "Maximum log distance. This number should not be larger than all chromosomes. Choose 8.2 for mouse. Default 8.4 (human).")
     args = parser.parse_args()
  
     if args.outdir_prefix:
@@ -359,7 +360,14 @@ if __name__ == '__main__':
     CIS_TRANS_OUT_FILE_PATH = outdir + '/' + sample_name + '.' + CIS_TRANS_OUT_FILE_SUFFIX
     PLOT_TABLE_OUT_FILE_PATH = outdir + '/' + sample_name + '.' + PLOT_TABLE_OUT_FILE_SUFFIX
 
+
+    # max_logdistance
+    if args.max_logdistance:
+        max_logdist = float(args.max_logdistance)
+    else:
+        max_logdist = 8.4
+
     # get the stats
     cis_trans_ratio (args.pairs, outfilename=CIS_TRANS_OUT_FILE_PATH, cols = cols)
-    distance_histogram (args.pairs, args.chrsize, outfilename=PLOT_TABLE_OUT_FILE_PATH, cols = cols, orientation_list = orientation_list)
+    distance_histogram (args.pairs, args.chrsize, outfilename=PLOT_TABLE_OUT_FILE_PATH, cols = cols, orientation_list = orientation_list, max_logdistance = max_logdist)
   
