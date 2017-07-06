@@ -84,6 +84,12 @@ The R script generates image files in `report/plots`.
 The output report can be found in `report/pairsqc_report.html`. (example : https://s3.amazonaws.com/4dn-github-related-files/pairsqc/test_report_d3_v4/pairsqc_report.html (multi-sample) )
 * Output text file example : [cis_to_trans.out](report/cis_to_trans.out) [plot_table.out](report/plot_table.out)
 
+* Note: To view the d3 plots in the output html, the file must be on a webserver. Try the following if you want to see it locally.
+```
+python -m http.server 8066
+# then open localhost:8066 on a browser, select your html file.
+```
+
 ### Example run
 ```
 python pairsqc.py -p test_samples/merged_nodup.tab.chrblock_sorted.txt.gz -c test_samples/GRCh37.chrom.sizes.mainonly.female -t M
