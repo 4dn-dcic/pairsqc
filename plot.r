@@ -13,7 +13,7 @@ library(plotosaurus)
 library(stringr)
 source("https://raw.githubusercontent.com/SooLee/d3forNozzleR/master/interactive_multiline_d3prep.r") # for d3 integration
 
-plot_orientation_proportion_vs_distance <- function(x, RE_len, xlim=c(2,4), no_xlabel=FALSE){
+plot_orientation_proportion_vs_distance <- function(x, RE_len, xlim=c(2,5), no_xlabel=FALSE){
   matplot(x$distance,x[,c('proportion.Inner','proportion.Outer','proportion.Right','proportion.Left')],pch=19,type='o',xlab="", ylab="Proportion",lwd=1,lty=1, col=COLOR4(), axes=F, xlim=xlim)
   exp_axis(xlim,1)
   axis(2)
@@ -25,7 +25,7 @@ plot_orientation_proportion_vs_distance <- function(x, RE_len, xlim=c(2,4), no_x
 } 
 
 
-plot_orientation_log10count_vs_distance <- function(x, RE_len, xlim=c(2,4), no_xlabel=FALSE){
+plot_orientation_log10count_vs_distance <- function(x, RE_len, xlim=c(2,5), no_xlabel=FALSE){
   ind = which(x$distance>=xlim[1] & x$distance<=xlim[2] & x$log10count.Inner!=-100 & x$log10count.Outer!=-100 & x$log10count.Right!=-100 & x$log10count.Left!=-100)
   ylim=range(x[ind,c('log10count.Inner','log10count.Outer','log10count.Right','log10count.Left')])
   matplot(x$distance,x[,c('log10count.Inner','log10count.Outer','log10count.Right','log10count.Left')],pch=19,type='o',xlab="", ylab="Contact frequency",lwd=1,lty=1,ylim=ylim, col=COLOR4(), axes=F, xlim=xlim)
@@ -66,7 +66,7 @@ plot_contact_probability_vs_distance <- function(x, xlim=c(3.2,8), no_xlabel=FAL
 
 # entropy
 entropy<-function(xx)-sum(xx*log2(xx))
-plot_entropy <- function(x, xlim=c(2,4), plt=c(0.2,0.95,0.2,0.95)){
+plot_entropy <- function(x, xlim=c(2,5), plt=c(0.2,0.95,0.2,0.95)){
   par(las=1,lend=2)
   par(plt=plt)
   entropies=apply(x[,c('proportion.Inner','proportion.Outer','proportion.Right','proportion.Left')],1,entropy)
@@ -76,7 +76,7 @@ plot_entropy <- function(x, xlim=c(2,4), plt=c(0.2,0.95,0.2,0.95)){
 }
 
 
-plot_sd_with_cutoff <- function(x, xlim=c(2,4)){
+plot_sd_with_cutoff <- function(x, xlim=c(2,5)){
   x=x[which(x$distance>=xlim[1] & x$distance<=xlim[2]),];
   sds=apply(x[,c('proportion.Inner','proportion.Outer','proportion.Right','proportion.Left')],1,sd)
   plot(x$distance, log10(sds), type='o',pch=19,ylab="sd",xlab="distance",xlim=xlim,axes=F, col=COLOR3B()[1])
