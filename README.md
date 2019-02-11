@@ -67,7 +67,7 @@ optional arguments:
                         report (do not include space)
   -M MAX_LOGDISTANCE, --max_logdistance MAX_LOGDISTANCE
                         Maximum log distance. This number should not be larger
-                        than all chromosomes. Choose 8.2 for mouse. Default
+                        than all chromosomes. Choose 8.2 for mouse/chicken. Default
                         8.4 (human).
 ```
 2) plot.r
