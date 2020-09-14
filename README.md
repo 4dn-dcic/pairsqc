@@ -96,7 +96,12 @@ python pairsqc.py -p test_samples/merged_nodup.tab.chrblock_sorted.txt.gz -c tes
 Rscript plot.r 4
 zip report.zip report # if you want to create a zip file for the report.
 ```
-* Note : The default max logdistance is set to be 8.4, which works for human. For non-human species, use -M option to reset the max logdistance. (e.g. -M 8.2 for mouse)
+
+### Max log distance
+
+The default max logdistance is set to be 8.4, which works for human. For non-human species, use -M option to reset the max logdistance. (e.g. -M 8.2 for mouse)
+The value for human was calculated as below:
+* The largest chromosome for human (hg38) is 248,956,422 bp. `log10(248956422) = 8.396123`. The value must be larger than this number but doesn't have to be much larger.
 
 
 &nbsp;
